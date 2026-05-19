@@ -1,0 +1,1632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AD Object Management Academy</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=JetBrains+Mono:wght@300;400;500;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-deep:    #010a1a;
+  --bg-base:    #020d24;
+  --bg-mid:     #040f2e;
+  --bg-glass:   rgba(6,18,52,0.6);
+  --bg-card:    rgba(8,22,60,0.55);
+  --blue:       #1a6cf0;
+  --cyan:       #00c8ff;
+  --teal:       #00e5c8;
+  --green:      #00e87a;
+  --amber:      #f0a500;
+  --red:        #e03050;
+  --purple:     #7060f0;
+  --text-hi:    #ddeeff;
+  --text-md:    #7098c8;
+  --text-lo:    #344466;
+  --border:     rgba(26,108,240,0.18);
+  --border-hi:  rgba(0,200,255,0.35);
+  --glow-blue:  rgba(26,108,240,0.22);
+  --glow-cyan:  rgba(0,200,255,0.12);
+  --mono: 'JetBrains Mono', monospace;
+  --head: 'Orbitron', sans-serif;
+  --body: 'Inter', sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg-deep);color:var(--text-hi);font-family:var(--body);line-height:1.65;overflow-x:hidden}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:var(--bg-deep)}::-webkit-scrollbar-thumb{background:var(--blue);border-radius:2px}
+
+/* ── NOISE TEXTURE overlay ── */
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");opacity:.4;pointer-events:none;z-index:0}
+
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:0 2rem;height:58px;background:rgba(1,10,26,.94);backdrop-filter:blur(24px);border-bottom:1px solid var(--border)}
+.nav-brand{font-family:var(--head);font-size:.72rem;letter-spacing:2.5px;color:var(--cyan);text-transform:uppercase}
+.nav-pills{display:flex;gap:.4rem}
+.npill{font-family:var(--mono);font-size:.62rem;letter-spacing:1px;padding:4px 11px;border:1px solid transparent;border-radius:3px;color:var(--text-md);cursor:pointer;transition:all .2s;background:none;text-transform:uppercase}
+.npill:hover{color:var(--cyan);border-color:var(--border-hi);background:var(--glow-cyan)}
+.nav-indicators{display:flex;gap:1.2rem;align-items:center}
+.ni{font-family:var(--mono);font-size:.6rem;color:var(--text-lo);display:flex;align-items:center;gap:.35rem}
+.ni-dot{width:5px;height:5px;border-radius:50%;background:var(--green);box-shadow:0 0 5px var(--green);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ── HERO ── */
+.hero{min-height:100vh;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 2rem 5rem;overflow:hidden}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 90% 60% at 50% -5%,rgba(26,108,240,.13) 0%,transparent 65%),radial-gradient(ellipse 50% 50% at 15% 90%,rgba(0,229,200,.05) 0%,transparent 60%),linear-gradient(180deg,#010a1a 0%,#020d24 100%)}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(26,108,240,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(26,108,240,.035) 1px,transparent 1px);background-size:55px 55px;mask-image:radial-gradient(ellipse 90% 90% at 50% 50%,black 0%,transparent 100%)}
+.hero-badge{font-family:var(--mono);font-size:.6rem;letter-spacing:3px;color:var(--cyan);text-transform:uppercase;padding:5px 14px;border:1px solid var(--border-hi);border-radius:2px;background:rgba(0,200,255,.04);margin-bottom:1.75rem;animation:fadeUp .7s ease both}
+.hero h1{font-family:var(--head);font-size:clamp(1.6rem,3.8vw,3rem);font-weight:900;text-align:center;line-height:1.18;max-width:880px;animation:fadeUp .7s .12s ease both;background:linear-gradient(135deg,#d8edff 0%,#6ab0f5 45%,#1a6cf0 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{max-width:660px;text-align:center;color:var(--text-md);font-size:.97rem;margin-top:1.25rem;animation:fadeUp .7s .25s ease both;line-height:1.75}
+.hero-feed{margin-top:2.25rem;animation:fadeUp .7s .38s ease both;background:var(--bg-glass);border:1px solid var(--border);border-radius:9px;padding:.9rem 1.4rem;width:100%;max-width:460px;backdrop-filter:blur(12px)}
+.feed-hd{font-family:var(--mono);font-size:.58rem;color:var(--text-lo);letter-spacing:2px;text-transform:uppercase;margin-bottom:.6rem}
+.fi{display:flex;align-items:center;gap:.65rem;padding:4px 0;font-family:var(--mono);font-size:.7rem;color:var(--text-md);opacity:0;animation:fiIn .45s forwards}
+.fi:nth-child(2){animation-delay:.75s}.fi:nth-child(3){animation-delay:1.2s}.fi:nth-child(4){animation-delay:1.65s}.fi:nth-child(5){animation-delay:2.1s}.fi:nth-child(6){animation-delay:2.55s}.fi:nth-child(7){animation-delay:3s}
+@keyframes fiIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
+.fi-ic{color:var(--green);font-size:.62rem}
+.hero-btns{display:flex;gap:.9rem;margin-top:2rem;animation:fadeUp .7s .52s ease both;flex-wrap:wrap;justify-content:center}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.btn-p{font-family:var(--mono);font-size:.72rem;letter-spacing:1px;padding:11px 26px;background:var(--blue);color:#fff;border:1px solid var(--blue);border-radius:4px;cursor:pointer;transition:all .25s;text-transform:uppercase}
+.btn-p:hover{background:transparent;color:var(--cyan);border-color:var(--cyan);box-shadow:0 0 18px rgba(0,200,255,.18)}
+.btn-s{font-family:var(--mono);font-size:.72rem;letter-spacing:1px;padding:11px 26px;background:transparent;color:var(--text-md);border:1px solid var(--border);border-radius:4px;cursor:pointer;transition:all .25s;text-transform:uppercase}
+.btn-s:hover{color:var(--cyan);border-color:var(--border-hi)}
+
+/* ── SVG HERO DECO ── */
+.hero-deco{position:absolute;right:4%;top:50%;transform:translateY(-50%);width:280px;opacity:.28;pointer-events:none}
+
+/* ── LAYOUT ── */
+.wrap{max-width:1180px;margin:0 auto;padding:5rem 2rem}
+.wrap-sm{max-width:900px;margin:0 auto;padding:4rem 2rem}
+.alt-bg{background:linear-gradient(180deg,var(--bg-deep) 0%,rgba(4,15,46,.45) 50%,var(--bg-deep) 100%)}
+.divider{border:none;height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent)}
+
+/* ── SECTION HEADER ── */
+.sh{margin-bottom:2.5rem}
+.sh-tag{font-family:var(--mono);font-size:.58rem;letter-spacing:3px;color:var(--cyan);text-transform:uppercase;margin-bottom:.65rem;display:flex;align-items:center;gap:.7rem}
+.sh-tag::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--border-hi),transparent);max-width:180px}
+.sh-title{font-family:var(--head);font-size:clamp(1.1rem,2.4vw,1.75rem);font-weight:700;color:var(--text-hi);margin-bottom:.65rem}
+.sh-desc{color:var(--text-md);font-size:.93rem;max-width:620px;line-height:1.7}
+
+/* ── GLASS CARD ── */
+.gc{background:var(--bg-glass);border:1px solid var(--border);border-radius:10px;padding:1.65rem;transition:border-color .22s,transform .22s;backdrop-filter:blur(10px)}
+.gc:hover{border-color:var(--border-hi);transform:translateY(-2px)}
+
+/* ── FLOW ── */
+.flow{display:flex;flex-direction:column;align-items:center;gap:0;margin:1.75rem auto;max-width:420px}
+.fn{background:var(--bg-glass);border:1px solid var(--border);border-radius:8px;padding:.7rem 2rem;font-family:var(--mono);font-size:.78rem;color:var(--text-hi);text-align:center;width:100%;transition:border-color .25s}
+.fn.c{border-color:var(--cyan);background:rgba(0,200,255,.07);color:var(--cyan)}
+.fn.g{border-color:var(--green);background:rgba(0,232,122,.07);color:var(--green)}
+.fn.r{border-color:var(--red);background:rgba(224,48,80,.07);color:var(--red)}
+.fn.p{border-color:var(--purple);background:rgba(112,96,240,.07);color:var(--purple)}
+.fa{color:var(--text-lo);padding:2px 0;font-size:1.1rem;text-align:center}
+
+/* ── SPLIT ── */
+.split{display:grid;grid-template-columns:1fr 1fr;gap:1.4rem;margin-top:1.8rem}
+.sc{background:var(--bg-glass);border:1px solid var(--border);border-radius:10px;padding:1.75rem;position:relative;overflow:hidden;transition:border-color .22s}
+.sc:hover{border-color:var(--border-hi)}
+.sc-bar{position:absolute;top:0;left:0;right:0;height:2px}
+.sc-tag{font-family:var(--mono);font-size:.58rem;letter-spacing:2px;text-transform:uppercase;padding:3px 10px;border-radius:2px;margin-bottom:.9rem;display:inline-block}
+.sc-title{font-family:var(--head);font-size:.92rem;font-weight:700;margin-bottom:1rem}
+.si{display:flex;gap:.55rem;align-items:flex-start;margin-bottom:.55rem;font-size:.83rem;color:var(--text-md)}
+.si::before{content:'→';color:var(--cyan);font-family:var(--mono);font-size:.72rem;margin-top:2px;flex-shrink:0}
+
+/* ── OBJECT CARDS ── */
+.obj-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.2rem;margin-top:1.8rem}
+.obj-card{background:var(--bg-glass);border:1px solid var(--border);border-radius:10px;padding:1.4rem;cursor:pointer;transition:all .22s;position:relative;overflow:hidden}
+.obj-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--c,var(--cyan));transform:scaleX(0);transition:transform .22s}
+.obj-card:hover{border-color:var(--border-hi);transform:translateY(-3px);box-shadow:0 8px 28px rgba(0,0,0,.38)}
+.obj-card:hover::after{transform:scaleX(1)}
+.obj-icon{width:38px;height:38px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.05rem;margin-bottom:.9rem}
+.obj-name{font-family:var(--head);font-size:.8rem;font-weight:700;margin-bottom:.4rem}
+.obj-desc{font-size:.78rem;color:var(--text-md);line-height:1.6}
+.obj-tag{margin-top:.65rem;font-family:var(--mono);font-size:.58rem;letter-spacing:1px;padding:3px 8px;border-radius:2px;display:inline-block}
+
+/* ── OU TREE ── */
+.ou-tree{margin:2rem auto;max-width:700px}
+.ou-root{background:var(--bg-glass);border:1px solid var(--border-hi);border-radius:9px;padding:.8rem 1.5rem;font-family:var(--head);font-size:.82rem;color:var(--cyan);text-align:center;margin-bottom:0}
+.ou-branches{display:flex;justify-content:center;gap:1rem;margin-top:0;flex-wrap:wrap}
+.ou-connector{width:1px;height:28px;background:linear-gradient(180deg,var(--border-hi),transparent);margin:0 auto}
+.ou-node{background:var(--bg-glass);border:1px solid var(--border);border-radius:8px;padding:.6rem 1.2rem;font-family:var(--mono);font-size:.72rem;color:var(--text-md);text-align:center;cursor:pointer;transition:all .22s;min-width:100px}
+.ou-node:hover{border-color:var(--cyan);color:var(--cyan)}
+.ou-node.active{border-color:var(--cyan);color:var(--cyan);background:rgba(0,200,255,.07)}
+.ou-children{display:none;margin-top:.5rem;flex-direction:column;gap:.35rem}
+.ou-node.active .ou-children{display:flex}
+.ou-child{font-family:var(--mono);font-size:.65rem;color:var(--text-lo);padding:2px 8px;border-radius:3px;background:rgba(0,200,255,.04);border:1px solid rgba(0,200,255,.1)}
+
+/* ── STEP LIST ── */
+.steps{margin-top:1.5rem}
+.step{display:flex;gap:1.2rem;align-items:flex-start;padding:1.1rem;border:1px solid transparent;border-radius:8px;margin-bottom:.65rem;transition:all .22s;cursor:pointer}
+.step:hover{background:var(--bg-glass);border-color:var(--border)}
+.snum{width:30px;height:30px;border-radius:50%;border:1px solid var(--blue);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.67rem;color:var(--cyan);flex-shrink:0}
+.scnt{flex:1}
+.stitle{font-weight:600;font-size:.88rem;margin-bottom:.3rem}
+.sdesc{font-size:.8rem;color:var(--text-md);line-height:1.65}
+.scode{margin-top:.45rem;font-family:var(--mono);font-size:.72rem;color:var(--cyan);background:rgba(0,200,255,.05);padding:3px 10px;border-radius:4px;display:inline-block}
+
+/* ── ANALOGY BOX ── */
+.ab{background:rgba(26,108,240,.07);border:1px solid rgba(26,108,240,.22);border-left:3px solid var(--blue);border-radius:0 8px 8px 0;padding:1.15rem 1.4rem;margin:1.4rem 0}
+.ab-label{font-family:var(--mono);font-size:.58rem;letter-spacing:2px;color:var(--blue);text-transform:uppercase;margin-bottom:.45rem}
+.ab-text{font-size:.86rem;color:var(--text-md);line-height:1.7}
+
+/* ── INFO GRID ── */
+.ig{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:1rem;margin-top:1.4rem}
+.ii{background:var(--bg-glass);border:1px solid var(--border);border-radius:8px;padding:1.15rem;text-align:center}
+.iv{font-family:var(--head);font-size:1.4rem;color:var(--cyan);font-weight:700}
+.il{font-size:.76rem;color:var(--text-md);margin-top:.2rem}
+
+/* ── AUTH FLOW ── */
+.auth-wrap{display:flex;flex-direction:column;align-items:center;gap:0;margin:2rem auto;max-width:480px}
+.an{background:var(--bg-glass);border:1px solid var(--border);border-radius:9px;padding:.95rem 2rem;text-align:center;width:100%;transition:all .28s}
+.an .albl{font-family:var(--mono);font-size:.6rem;color:var(--text-lo);text-transform:uppercase;letter-spacing:1px;margin-bottom:.2rem}
+.an .atitle{font-size:.88rem;font-weight:600;color:var(--text-hi)}
+.an.hl{border-color:var(--cyan);background:rgba(0,200,255,.07);box-shadow:0 0 18px rgba(0,200,255,.12)}
+.an.hl .atitle{color:var(--cyan)}
+.an.hg{border-color:var(--green);background:rgba(0,232,122,.07);box-shadow:0 0 18px rgba(0,232,122,.1)}
+.an.hg .atitle{color:var(--green)}
+.ac{display:flex;flex-direction:column;align-items:center;padding:3px 0;color:var(--text-lo);font-family:var(--mono);font-size:.6rem;letter-spacing:1px}
+.ac-line{width:1px;height:22px;background:linear-gradient(180deg,var(--border-hi),transparent);margin-bottom:2px}
+.play-btn{margin-top:1.4rem;font-family:var(--mono);font-size:.68rem;letter-spacing:1px;padding:7px 18px;background:transparent;color:var(--cyan);border:1px solid var(--border-hi);border-radius:4px;cursor:pointer;transition:all .2s;text-transform:uppercase}
+.play-btn:hover{background:rgba(0,200,255,.07)}
+
+/* ── KERBEROS ── */
+.kerb-wrap{display:grid;grid-template-columns:1fr auto 1fr;gap:1rem;align-items:start;margin-top:2rem}
+.kerb-box{background:var(--bg-glass);border:1px solid var(--border);border-radius:9px;padding:1.3rem}
+.kerb-title{font-family:var(--head);font-size:.78rem;font-weight:700;margin-bottom:.75rem;text-align:center}
+.kerb-item{font-family:var(--mono);font-size:.7rem;color:var(--text-md);padding:4px 0;border-bottom:1px solid rgba(26,108,240,.07);display:flex;align-items:center;gap:.5rem}
+.kerb-item:last-child{border-bottom:none}
+.kerb-item::before{content:'▸';color:var(--cyan)}
+.kerb-center{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.5rem;padding-top:2.5rem}
+.kerb-label{font-family:var(--mono);font-size:.6rem;color:var(--text-lo);letter-spacing:1px}
+.kerb-arrow{color:var(--text-lo);font-size:1.2rem}
+
+/* ── IP CONFIG ── */
+.ip-box{background:#010812;border:1px solid var(--border-hi);border-radius:9px;padding:1.4rem;font-family:var(--mono);font-size:.8rem}
+.ip-row{display:flex;justify-content:space-between;align-items:center;padding:.45rem 0;border-bottom:1px solid rgba(26,108,240,.07)}
+.ip-row:last-child{border-bottom:none}
+.ip-k{color:var(--text-lo)}
+.ip-v{color:var(--cyan)}
+.ip-v.warn{color:var(--amber)}
+
+/* ── TERMINAL ── */
+.term{background:#010812;border:1px solid var(--border-hi);border-radius:10px;overflow:hidden;margin-top:1.8rem}
+.term-hd{display:flex;align-items:center;gap:.45rem;padding:.7rem 1rem;background:rgba(26,108,240,.08);border-bottom:1px solid var(--border)}
+.td{width:9px;height:9px;border-radius:50%}
+.td.r{background:var(--red)}.td.y{background:var(--amber)}.td.g{background:var(--green)}
+.term-info{font-family:var(--mono);font-size:.62rem;color:var(--text-lo);margin-left:auto}
+.term-body{padding:1.15rem;min-height:280px;font-family:var(--mono);font-size:.78rem}
+.tol{margin-bottom:2px;white-space:pre-wrap;color:var(--text-md)}
+.tol.cmd{color:var(--green)}
+.tol.info{color:var(--cyan)}
+.tol.err{color:var(--red)}
+.tol.hi{color:var(--text-hi)}
+.term-in-wrap{padding:0 1.15rem 1.15rem}
+.cmd-btns{display:flex;flex-wrap:wrap;gap:.35rem;margin-bottom:.7rem}
+.cb{font-family:var(--mono);font-size:.63rem;padding:3px 9px;border:1px solid var(--border);border-radius:3px;color:var(--text-md);cursor:pointer;transition:all .18s;background:none}
+.cb:hover{border-color:var(--cyan);color:var(--cyan);background:rgba(0,200,255,.06)}
+.term-in-row{display:flex;align-items:center;gap:.45rem;border-top:1px solid var(--border);padding-top:.9rem}
+.term-prompt{color:var(--green);flex-shrink:0;font-family:var(--mono);font-size:.78rem}
+.term-input{flex:1;background:transparent;border:none;outline:none;color:var(--text-hi);font-family:var(--mono);font-size:.78rem;caret-color:var(--cyan)}
+
+/* ── USER CREATOR ── */
+.user-form{background:var(--bg-glass);border:1px solid var(--border);border-radius:10px;padding:1.75rem;max-width:520px;margin:1.5rem 0}
+.uf-title{font-family:var(--head);font-size:.8rem;font-weight:700;margin-bottom:1.2rem;color:var(--cyan)}
+.uf-row{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-bottom:.8rem}
+.uf-field{display:flex;flex-direction:column;gap:.35rem}
+.uf-label{font-family:var(--mono);font-size:.6rem;letter-spacing:1px;color:var(--text-md);text-transform:uppercase}
+.uf-input{background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:5px;padding:.55rem .8rem;color:var(--text-hi);font-family:var(--mono);font-size:.78rem;outline:none;transition:border-color .2s}
+.uf-input:focus{border-color:var(--cyan)}
+.uf-select{background:rgba(1,10,26,.9);border:1px solid var(--border);border-radius:5px;padding:.55rem .8rem;color:var(--text-hi);font-family:var(--mono);font-size:.78rem;outline:none;transition:border-color .2s;cursor:pointer}
+.uf-select:focus{border-color:var(--cyan)}
+.uf-submit{font-family:var(--mono);font-size:.72rem;letter-spacing:1px;padding:9px 20px;background:var(--blue);color:#fff;border:1px solid var(--blue);border-radius:4px;cursor:pointer;transition:all .22s;text-transform:uppercase;margin-top:.5rem}
+.uf-submit:hover{background:transparent;color:var(--cyan);border-color:var(--cyan)}
+.uf-output{display:none;margin-top:1.2rem;padding:1rem;border:1px solid var(--green);border-radius:6px;background:rgba(0,232,122,.06);font-family:var(--mono);font-size:.75rem;color:var(--green)}
+.uf-output.show{display:block}
+
+/* ── DOMAIN JOIN SIM ── */
+.dj-wrap{background:var(--bg-glass);border:1px solid var(--border);border-radius:10px;padding:1.75rem;max-width:560px;margin-top:1.5rem}
+.dj-title{font-family:var(--head);font-size:.8rem;font-weight:700;margin-bottom:1.2rem}
+.dj-step{display:none}
+.dj-step.active{display:block}
+.dj-content{margin-bottom:1.2rem}
+.dj-nav{display:flex;gap:.7rem;margin-top:1rem}
+.dj-btn{font-family:var(--mono);font-size:.68rem;padding:7px 16px;border:1px solid var(--border);border-radius:4px;cursor:pointer;background:none;color:var(--text-md);transition:all .2s;text-transform:uppercase}
+.dj-btn:hover{border-color:var(--cyan);color:var(--cyan)}
+.dj-btn.primary{background:var(--blue);color:#fff;border-color:var(--blue)}
+.dj-btn.primary:hover{background:transparent;color:var(--cyan);border-color:var(--cyan)}
+.dj-prog{display:flex;gap:.4rem;margin-bottom:1.2rem}
+.dp{flex:1;height:3px;border-radius:2px;background:var(--border)}
+.dp.done{background:var(--cyan)}
+.dp.current{background:var(--blue)}
+
+/* ── QUIZ ── */
+.qcard{background:var(--bg-glass);border:1px solid var(--border);border-radius:10px;padding:1.75rem;margin-bottom:1.4rem}
+.qq{font-size:.93rem;font-weight:500;margin-bottom:1.15rem}
+.qopts{display:flex;flex-direction:column;gap:.45rem}
+.qo{padding:.7rem 1rem;border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:.83rem;color:var(--text-md);transition:all .18s;font-family:var(--body);background:transparent;text-align:left}
+.qo:hover{border-color:var(--blue);color:var(--text-hi)}
+.qo.ok{border-color:var(--green)!important;background:rgba(0,232,122,.07)!important;color:var(--green)!important}
+.qo.bad{border-color:var(--red)!important;background:rgba(224,48,80,.07)!important;color:var(--red)!important}
+.qfb{margin-top:.7rem;padding:.7rem 1rem;border-radius:6px;font-size:.8rem;display:none}
+.qfb.show{display:block}
+.qfb.ok{background:rgba(0,232,122,.07);color:var(--green)}
+.qfb.bad{background:rgba(224,48,80,.07);color:var(--red)}
+.score-hd{background:var(--bg-glass);border:1px solid var(--border);border-radius:9px;padding:1.15rem 1.4rem;display:flex;align-items:center;gap:1.8rem;flex-wrap:wrap;margin-bottom:1.8rem}
+.sc-lbl{font-family:var(--mono);font-size:.6rem;color:var(--text-lo);text-transform:uppercase;letter-spacing:1px}
+.sc-val{font-family:var(--head);font-size:1.45rem;color:var(--cyan)}
+.pb-wrap{background:rgba(26,108,240,.1);border-radius:4px;height:5px;flex:1;overflow:hidden;min-width:120px}
+.pb{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--blue),var(--cyan));transition:width .45s ease}
+
+/* ── SECURITY CARDS ── */
+.sec-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:1rem;margin-top:1.8rem}
+.sec-card{background:var(--bg-glass);border:1px solid var(--border);border-left:3px solid var(--red);border-radius:8px;padding:1.2rem}
+.sec-title{font-weight:600;font-size:.86rem;margin-bottom:.45rem;color:var(--red)}
+.sec-desc{font-size:.78rem;color:var(--text-md);line-height:1.6}
+
+/* ── TOPOLOGY ── */
+.topo{display:flex;flex-direction:column;align-items:center;gap:0;margin:1.8rem auto;max-width:380px}
+.tn{background:var(--bg-glass);border:1px solid var(--border);border-radius:8px;padding:.7rem 2rem;text-align:center;width:100%;font-family:var(--mono);font-size:.78rem}
+.tn.kali{border-color:rgba(224,48,80,.5);color:var(--red)}
+.tn.dc{border-color:var(--cyan);color:var(--cyan)}
+.tn.win{border-color:rgba(26,108,240,.5);color:#7ab8f5}
+.tn.dom{border-color:var(--green);color:var(--green);background:rgba(0,232,122,.04)}
+.ta{color:var(--text-lo);padding:2px 0}
+
+/* ── LOGIN COMPARE ── */
+.lc{display:grid;grid-template-columns:1fr 1fr;gap:1.4rem;margin-top:1.8rem}
+.lb{background:#010812;border:1px solid var(--border);border-radius:9px;overflow:hidden}
+.lb-hd{padding:.65rem 1rem;font-family:var(--mono);font-size:.62rem;letter-spacing:1px;color:var(--text-lo);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.45rem;text-transform:uppercase}
+.lb-body{padding:1.4rem;font-family:var(--mono)}
+.lb-prompt{color:var(--text-lo);font-size:.7rem;margin-bottom:.4rem}
+.lb-val{font-size:.95rem;font-weight:500}
+.lb-meta{margin-top:.9rem;font-size:.68rem;color:var(--text-lo)}
+
+/* ── CONCLUSION ── */
+.conc-flow{display:flex;flex-direction:column;align-items:center;gap:0;margin:2.5rem auto;max-width:460px}
+.cf{background:var(--bg-glass);border:1px solid var(--border);border-radius:9px;padding:.9rem 2.2rem;text-align:center;width:100%;transition:all .28s;font-size:.88rem}
+.cf:nth-child(1){border-color:rgba(26,108,240,.45)}
+.cf:nth-child(3){border-color:rgba(26,108,240,.55)}
+.cf:nth-child(5){border-color:rgba(0,200,255,.4)}
+.cf:nth-child(7){border-color:rgba(0,200,255,.5)}
+.cf:nth-child(9){border-color:var(--green);background:rgba(0,232,122,.05);color:var(--green);font-weight:600}
+.ca{color:var(--text-lo);padding:3px 0}
+
+/* ── ERROR CARDS ── */
+.err-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin-top:1.8rem}
+.err-card{background:var(--bg-glass);border:1px solid var(--border);border-radius:9px;padding:1.3rem;border-top:2px solid var(--red)}
+.err-title{font-family:var(--mono);font-size:.72rem;color:var(--red);margin-bottom:.5rem;letter-spacing:.5px}
+.err-reason{font-size:.78rem;color:var(--text-md);margin-bottom:.5rem}
+.err-fix{font-family:var(--mono);font-size:.7rem;color:var(--green);background:rgba(0,232,122,.06);padding:4px 8px;border-radius:4px;display:inline-block}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){.split,.lc,.kerb-wrap{grid-template-columns:1fr}.hero-deco{display:none}.kerb-center{display:none}nav .nav-pills{display:none}}
+
+/* ── SCROLL REVEAL ── */
+.reveal{opacity:0;transform:translateY(22px);transition:opacity .55s ease,transform .55s ease}
+.reveal.in{opacity:1;transform:translateY(0)}
+</style>
+</head>
+<body>
+
+<!-- ═══ NAV ═══ -->
+<nav>
+  <div class="nav-brand">AD Management Academy</div>
+  <div class="nav-pills">
+    <button class="npill" onclick="go('s-objects')">Objects</button>
+    <button class="npill" onclick="go('s-ou')">OUs</button>
+    <button class="npill" onclick="go('s-users')">Users</button>
+    <button class="npill" onclick="go('s-join')">Domain Join</button>
+    <button class="npill" onclick="go('s-kerb')">Kerberos</button>
+    <button class="npill" onclick="go('s-quiz')">Quiz</button>
+  </div>
+  <div class="nav-indicators">
+    <span class="ni"><span class="ni-dot"></span>hackverse.local</span>
+    <span class="ni"><span class="ni-dot"></span>172.16.0.10</span>
+  </div>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+
+  <!-- SVG DECO: AD tree -->
+  <svg class="hero-deco" viewBox="0 0 280 360" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="95" y="8" width="90" height="46" rx="6" fill="rgba(0,200,255,.07)" stroke="rgba(0,200,255,.4)" stroke-width="1"/>
+    <text x="140" y="37" text-anchor="middle" fill="#00c8ff" font-size="9" font-family="JetBrains Mono">hackverse.local</text>
+    <line x1="140" y1="54" x2="50" y2="120" stroke="rgba(0,200,255,.18)" stroke-width="1" stroke-dasharray="4,3"><animate attributeName="stroke-dashoffset" from="0" to="-14" dur="1.1s" repeatCount="indefinite"/></line>
+    <line x1="140" y1="54" x2="140" y2="120" stroke="rgba(26,108,240,.25)" stroke-width="1" stroke-dasharray="4,3"><animate attributeName="stroke-dashoffset" from="0" to="-14" dur=".9s" repeatCount="indefinite"/></line>
+    <line x1="140" y1="54" x2="230" y2="120" stroke="rgba(0,200,255,.18)" stroke-width="1" stroke-dasharray="4,3"><animate attributeName="stroke-dashoffset" from="0" to="-14" dur="1.3s" repeatCount="indefinite"/></line>
+    <rect x="10" y="120" width="80" height="38" rx="5" fill="rgba(26,108,240,.07)" stroke="rgba(26,108,240,.3)" stroke-width="1"/>
+    <text x="50" y="143" text-anchor="middle" fill="#7ab8f5" font-size="8" font-family="JetBrains Mono">HR OU</text>
+    <rect x="100" y="120" width="80" height="38" rx="5" fill="rgba(26,108,240,.07)" stroke="rgba(26,108,240,.3)" stroke-width="1"/>
+    <text x="140" y="143" text-anchor="middle" fill="#7ab8f5" font-size="8" font-family="JetBrains Mono">IT OU</text>
+    <rect x="190" y="120" width="80" height="38" rx="5" fill="rgba(26,108,240,.07)" stroke="rgba(26,108,240,.3)" stroke-width="1"/>
+    <text x="230" y="143" text-anchor="middle" fill="#7ab8f5" font-size="8" font-family="JetBrains Mono">Finance OU</text>
+    <line x1="50" y1="158" x2="50" y2="210" stroke="rgba(26,108,240,.15)" stroke-width="1"/>
+    <line x1="140" y1="158" x2="140" y2="210" stroke="rgba(26,108,240,.15)" stroke-width="1"/>
+    <line x1="230" y1="158" x2="230" y2="210" stroke="rgba(26,108,240,.15)" stroke-width="1"/>
+    <circle cx="50" cy="218" r="5" fill="rgba(0,232,122,.15)" stroke="rgba(0,232,122,.4)" stroke-width="1"><animate attributeName="opacity" values="1;.3;1" dur="2s" repeatCount="indefinite"/></circle>
+    <circle cx="140" cy="218" r="5" fill="rgba(0,200,255,.15)" stroke="rgba(0,200,255,.4)" stroke-width="1"><animate attributeName="opacity" values="1;.3;1" dur="2.3s" repeatCount="indefinite"/></circle>
+    <circle cx="230" cy="218" r="5" fill="rgba(112,96,240,.15)" stroke="rgba(112,96,240,.4)" stroke-width="1"><animate attributeName="opacity" values="1;.3;1" dur="1.8s" repeatCount="indefinite"/></circle>
+    <text x="50" y="240" text-anchor="middle" fill="rgba(0,232,122,.5)" font-size="7" font-family="JetBrains Mono">3 users</text>
+    <text x="140" y="240" text-anchor="middle" fill="rgba(0,200,255,.5)" font-size="7" font-family="JetBrains Mono">5 users</text>
+    <text x="230" y="240" text-anchor="middle" fill="rgba(112,96,240,.5)" font-size="7" font-family="JetBrains Mono">4 users</text>
+  </svg>
+
+  <div class="hero-badge">Session 2 · AD Object Management & Domain Integration</div>
+  <h1>Active Directory Object Management &amp;<br>Domain Client Integration</h1>
+  <p class="hero-sub">Learn how enterprises organize users, groups, computers, and policies using centralized Active Directory infrastructure — then connect clients to the domain.</p>
+
+  <div class="hero-feed">
+    <div class="feed-hd">// Domain Activity Feed — hackverse.local</div>
+    <div class="fi"><span class="fi-ic">✓</span> Organizational Unit Created — IT Dept</div>
+    <div class="fi"><span class="fi-ic">✓</span> User Created — student1@hackverse.local</div>
+    <div class="fi"><span class="fi-ic">✓</span> Client Joined Domain — WIN10-PC01</div>
+    <div class="fi"><span class="fi-ic">✓</span> Kerberos Ticket Issued — TGT</div>
+    <div class="fi"><span class="fi-ic">✓</span> Group Policy Applied</div>
+    <div class="fi"><span class="fi-ic">✓</span> Authentication Successful — hackverse\student1</div>
+  </div>
+
+  <div class="hero-btns">
+    <button class="btn-p" onclick="go('s-objects')">🚀 Launch AD Management Lab</button>
+    <button class="btn-s" onclick="go('s-recap')">Review Foundation</button>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ═══ SECTION 2 – RECAP ═══ -->
+<section id="s-recap">
+<div class="wrap reveal">
+  <div class="sh">
+    <div class="sh-tag">Foundation Recap</div>
+    <h2 class="sh-title">What We Built Last Session</h2>
+    <p class="sh-desc">Before managing AD objects, students must internalize what was constructed — a centralized identity authority running inside a Windows Server VM.</p>
+  </div>
+  <div class="flow">
+    <div class="fn">Windows Server 2022 Installed</div><div class="fa">↓</div>
+    <div class="fn">Static IP Configured → 172.16.0.10</div><div class="fa">↓</div>
+    <div class="fn">AD DS + DNS Roles Installed</div><div class="fa">↓</div>
+    <div class="fn c">Promoted to Domain Controller</div><div class="fa">↓</div>
+    <div class="fn">Forest Created: hackverse.local</div><div class="fa">↓</div>
+    <div class="fn g">Centralized Authentication Enabled ✓</div>
+  </div>
+  <div class="ab">
+    <div class="ab-label">What Changed</div>
+    <div class="ab-text">The Windows Server is now a <strong style="color:var(--cyan)">Domain Controller</strong> — the central brain of the enterprise network. It holds the NTDS.dit database of all identities, runs DNS so clients can locate it, and enforces policies across every machine that joins the domain. Now we populate this empty domain with actual objects.</div>
+  </div>
+</div>
+</section>
+
+<hr class="divider">
+
+<!-- ═══ SECTION 3 – WHY CENTRALIZED MGMT ═══ -->
+<div class="alt-bg">
+<div class="wrap reveal">
+  <div class="sh">
+    <div class="sh-tag">Enterprise Justification</div>
+    <h2 class="sh-title">Why Enterprises Need Centralized Management</h2>
+    <p class="sh-desc">At scale, decentralized identity management becomes operationally impossible. Active Directory solves this by consolidating control.</p>
+  </div>
+  <div class="ig">
+    <div class="ii"><div class="iv" style="color:var(--red)">500</div><div class="il">Employees needing accounts</div></div>
+    <div class="ii"><div class="iv" style="color:var(--red)">500</div><div class="il">PCs without AD — local accounts only</div></div>
+    <div class="ii"><div class="iv" style="color:var(--red)">∞</div><div class="il">Policy inconsistencies</div></div>
+    <div class="ii"><div class="iv" style="color:var(--green)">1</div><div class="il">Domain Controller manages everything</div></div>
+  </div>
+  <div class="split">
+    <div class="sc">
+      <div class="sc-bar" style="background:var(--red)"></div>
+      <span class="sc-tag" style="background:rgba(224,48,80,.1);color:var(--red);border:1px solid rgba(224,48,80,.3)">Without Active Directory</span>
+      <div class="sc-title" style="color:var(--red)">Decentralized Chaos</div>
+      <div class="si">Account created individually on each machine</div>
+      <div class="si">Password policies differ per machine</div>
+      <div class="si">No centralized audit or visibility</div>
+      <div class="si">Software must be installed manually on every PC</div>
+      <div class="si">Impossible to manage at 500+ employee scale</div>
+    </div>
+    <div class="sc">
+      <div class="sc-bar" style="background:var(--green)"></div>
+      <span class="sc-tag" style="background:rgba(0,232,122,.1);color:var(--green);border:1px solid rgba(0,232,122,.3)">With Active Directory</span>
+      <div class="sc-title" style="color:var(--green)">Centralized Control</div>
+      <div class="si">One account works on every domain-joined machine</div>
+      <div class="si">Uniform password policies enforced via GPO</div>
+      <div class="si">Full audit logs and centralized monitoring</div>
+      <div class="si">Software deployed via Group Policy silently</div>
+      <div class="si">Scales to thousands of users effortlessly</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<hr class="divider">
+
+<!-- ═══ SECTION 4 – AD OBJECTS ═══ -->
+<section id="s-objects">
+<div class="wrap reveal">
+  <div class="sh">
+    <div class="sh-tag">Core Concepts</div>
+    <h2 class="sh-title">Active Directory Objects</h2>
+    <p class="sh-desc">Everything in AD is an object. Each object has attributes, a unique identity, and a specific role in the enterprise hierarchy.</p>
+  </div>
+  <div class="obj-grid">
+    <div class="obj-card" style="--c:var(--cyan)">
+      <div class="obj-icon" style="background:rgba(0,200,255,.1);color:var(--cyan)">👤</div>
+      <div class="obj-name">User Objects</div>
+      <div class="obj-desc">Represent individual enterprise identities. Store username, password hash, email, department, phone, and login restrictions. The foundation of all authentication.</div>
+      <div class="obj-tag" style="background:rgba(0,200,255,.09);color:var(--cyan);border:1px solid rgba(0,200,255,.28)">CN=jdoe,OU=IT,DC=hackverse,DC=local</div>
+    </div>
+    <div class="obj-card" style="--c:var(--teal)">
+      <div class="obj-icon" style="background:rgba(0,229,200,.1);color:var(--teal)">👥</div>
+      <div class="obj-name">Group Objects</div>
+      <div class="obj-desc">Bundle users with shared permissions. Instead of assigning access to 100 users individually, assign it to one group. Security groups control access; distribution groups handle email.</div>
+      <div class="obj-tag" style="background:rgba(0,229,200,.09);color:var(--teal);border:1px solid rgba(0,229,200,.28)">Security / Distribution Groups</div>
+    </div>
+    <div class="obj-card" style="--c:var(--purple)">
+      <div class="obj-icon" style="background:rgba(112,96,240,.1);color:var(--purple)">🖥</div>
+      <div class="obj-name">Computer Objects</div>
+      <div class="obj-desc">Created when a machine joins the domain. Allows centralized management, remote administration, policy targeting, and machine authentication using Kerberos.</div>
+      <div class="obj-tag" style="background:rgba(112,96,240,.09);color:var(--purple);border:1px solid rgba(112,96,240,.28)">WIN10-PC01$@hackverse.local</div>
+    </div>
+    <div class="obj-card" style="--c:var(--amber)">
+      <div class="obj-icon" style="background:rgba(240,165,0,.1);color:var(--amber)">📁</div>
+      <div class="obj-name">Organizational Units</div>
+      <div class="obj-desc">Containers that organize all other objects into logical departments. OUs are the primary targets for Group Policy application and delegation of control.</div>
+      <div class="obj-tag" style="background:rgba(240,165,0,.09);color:var(--amber);border:1px solid rgba(240,165,0,.28)">OU=HR,DC=hackverse,DC=local</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<hr class="divider">
+
+<!-- ═══ SECTION 5-6 – OUs ═══ -->
+<section id="s-ou">
+<div class="alt-bg">
+<div class="wrap reveal">
+  <div class="sh">
+    <div class="sh-tag">Organizational Design</div>
+    <h2 class="sh-title">Organizational Units (OUs) — Why They Exist</h2>
+    <p class="sh-desc">OUs are the filing system of Active Directory. Without them, all 10,000 objects in a large enterprise would exist in a flat, unmanageable chaos.</p>
+  </div>
+
+  <div class="ab">
+    <div class="ab-label">Enterprise Analogy</div>
+    <div class="ab-text">An OU is like a department in a company. Just as a company has HR, IT, Finance, and Security departments — each with their own physical spaces, access restrictions, and managers — Active Directory uses OUs to mirror this structure digitally. Each OU can have its own policies, its own delegated administrator, and its own set of objects.</div>
+  </div>
+
+  <div class="ou-tree">
+    <div class="ou-root">🌲 hackverse.local (Domain)</div>
+    <div class="ou-connector"></div>
+    <div class="ou-branches">
+      <div>
+        <div class="ou-node" onclick="toggleOU(this)" data-children="hr-user1,hr-user2,HR-PC01">🏢 HR</div>
+        <div class="ou-children" id="hr-children">
+          <div class="ou-child">👤 hr.manager</div>
+          <div class="ou-child">👤 hr.analyst</div>
+          <div class="ou-child">🖥 HR-PC01</div>
+        </div>
+      </div>
+      <div>
+        <div class="ou-node" onclick="toggleOU(this)">💻 IT</div>
+        <div class="ou-children">
+          <div class="ou-child">👤 sysadmin</div>
+          <div class="ou-child">👤 student1</div>
+          <div class="ou-child">🖥 WIN10-PC01</div>
+          <div class="ou-child">📜 IT-Policy-GPO</div>
+        </div>
+      </div>
+      <div>
+        <div class="ou-node" onclick="toggleOU(this)">💰 Finance</div>
+        <div class="ou-children">
+          <div class="ou-child">👤 finance.head</div>
+          <div class="ou-child">👤 accountant1</div>
+          <div class="ou-child">🖥 FIN-PC01</div>
+        </div>
+      </div>
+      <div>
+        <div class="ou-node" onclick="toggleOU(this)">🔐 Security</div>
+        <div class="ou-children">
+          <div class="ou-child">👤 sec.analyst</div>
+          <div class="ou-child">🖥 SOC-WS01</div>
+          <div class="ou-child">📜 Strict-Lockdown-GPO</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p style="text-align:center;font-family:var(--mono);font-size:.65rem;color:var(--text-lo);margin-top:.75rem">Click an OU to expand its contents</p>
+
+  <div class="split" style="margin-top:2rem">
+    <div class="sc">
+      <div class="sc-bar" style="background:var(--red)"></div>
+      <span class="sc-tag" style="background:rgba(224,48,80,.1);color:var(--red);border:1px solid rgba(224,48,80,.3)">Without OUs</span>
+      <div class="sc-title" style="color:var(--red)">Flat Chaos</div>
+      <div class="si">All 500 users dumped into one container</div>
+      <div class="si">No way to apply policy per department</div>
+      <div class="si">No delegation of department-level control</div>
+      <div class="si">Impossible to locate or audit specific users</div>
+    </div>
+    <div class="sc">
+      <div class="sc-bar" style="background:var(--green)"></div>
+      <span class="sc-tag" style="background:rgba(0,232,122,.1);color:var(--green);border:1px solid rgba(0,232,122,.3)">With OUs</span>
+      <div class="sc-title" style="color:var(--green)">Organized Hierarchy</div>
+      <div class="si">Each department has its own container and policies</div>
+      <div class="si">GPOs applied per OU — HR gets finance restrictions</div>
+      <div class="si">HR manager delegates access only for HR OU</div>
+      <div class="si">Fast auditing: find all IT users instantly</div>
+    </div>
+  </div>
+</div>
+</div>
+</section>
+
+<hr class="divider">
+
+<!-- ═══ SECTION 7-8 – ADUC + OU CREATION ═══ -->
+<div class="wrap reveal">
+  <div class="sh">
+    <div class="sh-tag">Administration Console</div>
+    <h2 class="sh-title">ADUC & Creating Organizational Units</h2>
+    <p class="sh-desc">Active Directory Users and Computers (ADUC) is the central console for managing all AD objects — the GUI-based identity management hub.</p>
+  </div>
+
+  <div class="ab">
+    <div class="ab-label">ADUC Overview</div>
+    <div class="ab-text">ADUC is the Microsoft Management Console (MMC) snap-in for AD object management. Open it via: <span style="color:var(--cyan);font-family:var(--mono)">Tools → Active Directory Users and Computers</span> inside Server Manager. The left panel shows the domain tree; the right panel shows objects in the selected container.</div>
+  </div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="snum">01</div>
+      <div class="scnt">
+        <div class="stitle">Open ADUC Console</div>
+        <div class="sdesc">Server Manager → Tools → Active Directory Users and Computers. The domain tree (hackverse.local) appears in the left panel with default containers.</div>
+        <span class="scode">Server Manager → Tools → ADUC</span>
+      </div>
+    </div>
+    <div class="step">
+      <div class="snum">02</div>
+      <div class="scnt">
+        <div class="stitle">Right-Click Domain Root</div>
+        <div class="sdesc">Right-click on hackverse.local in the left tree → New → Organizational Unit. This places the new OU directly under the domain root.</div>
+        <span class="scode">hackverse.local → Right-click → New → OU</span>
+      </div>
+    </div>
+    <div class="step">
+      <div class="snum">03</div>
+      <div class="scnt">
+        <div class="stitle">Name the OU</div>
+        <div class="sdesc">Enter the department name (HR, IT, Finance, Security). Check "Protect container from accidental deletion" for production environments. Click OK.</div>
+        <span class="scode">Name: IT → Protect: ✓ → OK</span>
+      </div>
+    </div>
+    <div class="step">
+      <div class="snum">04</div>
+      <div class="scnt">
+        <div class="stitle">Repeat for All Departments</div>
+        <div class="sdesc">Create separate OUs for HR, IT, Finance, Security. Each OU will later receive its own users, computers, and Group Policy Objects tailored to that department's needs.</div>
+        <span class="scode">Create: HR | IT | Finance | Security</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow" style="margin-top:1.8rem">
+    <div class="fn">Domain: hackverse.local</div><div class="fa">↓ Right-click → New → OU</div>
+    <div class="fn c">OU Created: IT Department</div><div class="fa">↓ Populate</div>
+    <div class="fn">Users + Computers + Policies placed inside</div><div class="fa">↓</div>
+    <div class="fn g">Organized, Policy-Managed Department ✓</div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ═══ SECTION 9 – USER CREATION ═══ -->
+<section id="s-users">
+<div class="alt-bg">
+<div class="wrap reveal">
+  <div class="sh">
+    <div class="sh-tag">Identity Management</div>
+    <h2 class="sh-title">Domain User Creation</h2>
+    <p class="sh-desc">Users are the core objects of Active Directory. Creating a domain user generates an enterprise identity that persists in NTDS.dit and is accessible from any domain-joined machine.</p>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:start">
+    <div>
+      <div class="steps">
+        <div class="step">
+          <div class="snum">01</div>
+          <div class="scnt">
+            <div class="stitle">Navigate to Target OU</div>
+            <div class="sdesc">In ADUC, expand hackverse.local and click the IT (or relevant) OU. This ensures the user is created inside the correct department container.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="snum">02</div>
+          <div class="scnt">
+            <div class="stitle">New User Wizard</div>
+            <div class="sdesc">Right-click OU → New → User. Enter First Name, Last Name, and User Logon Name (e.g., student1). Click Next.</div>
+            <span class="scode">Right-click OU → New → User</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="snum">03</div>
+          <div class="scnt">
+            <div class="stitle">Set Password</div>
+            <div class="sdesc">Enter and confirm password. Options: User must change password at next logon (common in enterprise), Password never expires (service accounts), Account is disabled.</div>
+            <span class="scode">Password: Pa$$w0rd123!</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="snum">04</div>
+          <div class="scnt">
+            <div class="stitle">User Created in NTDS.dit</div>
+            <div class="sdesc">Clicking Finish stores the user object in the AD database. The account is now accessible from any domain-joined machine — no local account needed.</div>
+            <span class="scode">CN=student1,OU=IT,DC=hackverse,DC=local</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="user-form" id="user-form">
+        <div class="uf-title">⊕ Create Domain User — Simulator</div>
+        <div class="uf-row">
+          <div class="uf-field">
+            <label class="uf-label">First Name</label>
+            <input class="uf-input" id="uf-fn" placeholder="John" value="">
+          </div>
+          <div class="uf-field">
+            <label class="uf-label">Last Name</label>
+            <input class="uf-input" id="uf-ln" placeholder="Doe" value="">
+          </div>
+        </div>
+        <div class="uf-row">
+          <div class="uf-field">
+            <label class="uf-label">Username (SAM)</label>
+            <input class="uf-input" id="uf-un" placeholder="jdoe" value="">
+          </div>
+          <div class="uf-field">
+            <label class="uf-label">Target OU</label>
+            <select class="uf-select" id="uf-ou">
+              <option value="IT">IT</option>
+              <option value="HR">HR</option>
+              <option value="Finance">Finance</option>
+              <option value="Security">Security</option>
+            </select>
+          </div>
+        </div>
+        <div class="uf-field" style="margin-bottom:.8rem">
+          <label class="uf-label">Password</label>
+          <input class="uf-input" id="uf-pw" type="password" placeholder="Pa$$w0rd123!">
+        </div>
+        <button class="uf-submit" onclick="createUser()">Create User in Active Directory</button>
+        <div class="uf-output" id="uf-output"></div>
+      </div>
+      <div class="ab" style="margin-top:1rem">
+        <div class="ab-label">What Gets Created</div>
+        <div class="ab-text">AD stores: SamAccountName, UserPrincipalName, PasswordHash (bcrypt), SID, memberOf (groups), lastLogon, AccountControl flags, distinguishedName (full path in AD tree).</div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</section>
+
+<hr class="divider">
+
+<!-- ═══ SECTION 10 – AUTH FLOW ═══ -->
+<div class="wrap reveal">
+  <div class="sh">
+    <div class="sh-tag">Authentication Workflow</div>
+    <h2 class="sh-title">User Authentication Flow</h2>
+    <p class="sh-desc">Every domain login triggers this exact sequence. Understanding it is essential for both enterprise administration and offensive security operations.</p>
+  </div>
+
+  <div class="auth-wrap" id="af">
+    <div class="an" id="af1"><div class="albl">Step 1 — User Action</div><div class="atitle">👤 hackverse\student1 enters credentials</div></div>
+    <div class="ac"><div class="ac-line"></div><span>DNS Query</span></div>
+    <div class="an" id="af2"><div class="albl">Step 2 — DNS Resolution</div><div class="atitle">🔍 Client queries DNS for hackverse.local</div></div>
+    <div class="ac"><div class="ac-line"></div><span>IP Returned</span></div>
+    <div class="an" id="af3"><div class="albl">Step 3 — DC Located</div><div class="atitle">📍 DNS returns 172.16.0.10 → DC found</div></div>
+    <div class="ac"><div class="ac-line"></div><span>Kerberos AS-REQ</span></div>
+    <div class="an" id="af4"><div class="albl">Step 4 — Kerberos Request</div><div class="atitle">🔒 Encrypted auth request sent to KDC on DC</div></div>
+    <div class="ac"><div class="ac-line"></div><span>NTDS.dit Check</span></div>
+    <div class="an" id="af5"><div class="albl">Step 5 — Identity Verified</div><div class="atitle">🗄 AD database validates credentials</div></div>
+    <div class="ac"><div class="ac-line"></div><span>TGT Issued</span></div>
+    <div class="an" id="af6"><div class="albl">Step 6 — Access Granted</div><div class="atitle">✅ Kerberos Ticket issued → Session started</div></div>
+    <button class="play-btn" onclick="playAuth()">▶ Simulate Authentication Flow</button>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ═══ SECTION 11-12 – GROUPS ═══ -->
+<div class="alt-bg">
+<div class="wrap reveal">
+  <div class="sh">
+    <div class="sh-tag">Permission Management</div>
+    <h2 class="sh-title">Group Management — Why Groups Matter</h2>
+    <p class="sh-desc">Groups are the scalable layer between individual users and resource permissions. They are central to enterprise access control architecture.</p>
+  </div>
+
+  <div class="ab">
+    <div class="ab-label">Enterprise Analogy</div>
+    <div class="ab-text">Groups work like "All Staff" email lists in a company. Instead of emailing 500 people individually, you email the group. In AD, instead of giving 500 users access to the Finance share individually, you put them in "Finance-ReadOnly" group and give the group access. Adding a new employee is just adding them to the group — they instantly inherit all permissions.</div>
+  </div>
+
+  <div class="split">
+    <div class="sc">
+      <div class="sc-bar" style="background:var(--red)"></div>
+      <span class="sc-tag" style="background:rgba(224,48,80,.1);color:var(--red);border:1px solid rgba(224,48,80,.3)">Without Groups</span>
+      <div class="sc-title" style="color:var(--red)">100 Users, 100 Manual Assignments</div>
+      <div class="si">Each user given permission to Finance Share individually</div>
+      <div class="si">New employee? Add permission to every resource one-by-one</div>
+      <div class="si">Employee leaves? Hunt down every permission assigned to them</div>
+      <div class="si">Zero scalability — administrative nightmare at enterprise scale</div>
+    </div>
+    <div class="sc">
+      <div class="sc-bar" style="background:var(--green)"></div>
+      <span class="sc-tag" style="background:rgba(0,232,122,.1);color:var(--green);border:1px solid rgba(0,232,122,.3)">With Groups</span>
+      <div class="sc-title" style="color:var(--green)">Group → Permission Once, Scale Forever</div>
+      <div class="si">Finance-ReadOnly group gets permission to Finance Share</div>
+      <div class="si">New employee? Add to group → Inherits all permissions instantly</div>
+      <div class="si">Employee leaves? Remove from groups → All access revoked instantly</div>
+      <div class="si">100% scalable — same process for 10 or 10,000 users</div>
+    </div>
+  </div>
+
+  <div class="flow" style="margin-top:2rem">
+    <div class="fn">100 Domain Users</div><div class="fa">↓ Add to</div>
+    <div class="fn c">IT-Admins Group</div><div class="fa">↓ Assign once</div>
+    <div class="fn">Permission to: Server Room, Admin Tools, Remote Desktop</div><div class="fa">↓</div>
+    <div class="fn g">All 100 users inherit all permissions automatically ✓</div>
+  </div>
+
+  <div class="obj-grid" style="margin-top:2rem">
+    <div class="obj-card" style="--c:var(--blue)">
+      <div class="obj-icon" style="background:rgba(26,108,240,.12);color:var(--blue)">🛡</div>
+      <div class="obj-name">Security Groups</div>
+      <div class="obj-desc">Control access to network resources — shared folders, printers, applications, RDP access. Members inherit all permissions assigned to the group.</div>
+      <div class="obj-tag" style="background:rgba(26,108,240,.1);color:#7ab8f5;border:1px solid rgba(26,108,240,.3)">Access Control</div>
+    </div>
+    <div class="obj-card" style="--c:var(--teal)">
+      <div class="obj-icon" style="background:rgba(0,229,200,.12);color:var(--teal)">📧</div>
+      <div class="obj-name">Distribution Groups</div>
+      <div class="obj-desc">Used for email mailing lists. Cannot be used for security permissions. Members receive emails sent to the group address — common in Exchange environments.</div>
+      <div class="obj-tag" style="background:rgba(0,229,200,.1);color:var(--teal);border:1px solid rgba(0,229,200,.3)">Email Distribution</div>
+    </div>
+    <div class="obj-card" style="--c:var(--purple)">
+      <div class="obj-icon" style="background:rgba(112,96,240,.12);color:var(--purple)">📋</div>
+      <div class="obj-name">Domain Local Groups</div>
+      <div class="obj-desc">Best for assigning resource permissions. Members can come from any domain in the forest. Use for: resource access groups like Finance-Share-ReadOnly.</div>
+      <div class="obj-tag" style="background:rgba(112,96,240,.1);color:var(--purple);border:1px solid rgba(112,96,240,.3)">Resource Assignment</div>
+    </div>
+    <div class="obj-card" style="--c:var(--amber)">
+      <div class="obj-icon" style="background:rgba(240,165,0,.12);color:var(--amber)">🌐</div>
+      <div class="obj-name">Global Groups</div>
+      <div class="obj-desc">Best for organizing users. Members must be from the same domain. Use for: departmental groups like IT-Admins, HR-Staff that are then added to domain local groups.</div>
+      <div class="obj-tag" style="background:rgba(240,165,0,.1);color:var(--amber);border:1px solid rgba(240,165,0,.3)">User Organization</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<hr class="divider">
+
+<!-- ═══ SECTION 13-16 – DOMAIN JOIN ═══ -->
+<section id="s-join">
+<div class="wrap reveal">
+  <div class="sh">
+    <div class="sh-tag">Client Integration</div>
+    <h2 class="sh-title">Domain Client Joining — Full Process</h2>
+    <p class="sh-desc">Joining a Windows client to the domain is what connects an isolated workstation to the centralized AD infrastructure. Walk through every step and the DNS dependency that makes it work.</p>
+  </div>
+
+  <div class="ab">
+    <div class="ab-label">Critical Prerequisite</div>
+    <div class="ab-text">Before joining: the client's <strong style="color:var(--cyan)">DNS server must point to the Domain Controller</strong>. Without this, the client cannot resolve "hackverse.local" to an IP address, the DC cannot be contacted, and the domain join will fail with "Domain not found" error.</div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:start;margin-top:1.5rem">
+    <div>
+      <div class="sh-tag" style="margin-bottom:1rem">Step-by-Step Domain Join</div>
+      <div class="dj-wrap" id="djw">
+        <div class="dj-prog" id="djp">
+          <div class="dp current" id="dps-0"></div>
+          <div class="dp" id="dps-1"></div>
+          <div class="dp" id="dps-2"></div>
+          <div class="dp" id="dps-3"></div>
+          <div class="dp" id="dps-4"></div>
+          <div class="dp" id="dps-5"></div>
+        </div>
+        <div class="dj-step active" id="djs-0">
+          <div class="dj-content">
+            <div class="stitle" style="margin-bottom:.5rem;font-size:.9rem">Step 1 — Configure Client DNS</div>
+            <div class="sdesc" style="margin-bottom:.9rem">On Windows 10 client: Network Adapter → IPv4 Properties. Set DNS to Domain Controller IP. Client IP can be DHCP or static — only DNS must point to DC.</div>
+            <div class="ip-box">
+              <div class="ip-row"><span class="ip-k">Client IP</span><span class="ip-v">172.16.0.20 (or DHCP)</span></div>
+              <div class="ip-row"><span class="ip-k">Subnet Mask</span><span class="ip-v">255.255.0.0</span></div>
+              <div class="ip-row"><span class="ip-k">Gateway</span><span class="ip-v">172.16.0.1</span></div>
+              <div class="ip-row"><span class="ip-k">Preferred DNS</span><span class="ip-v warn">172.16.0.10 ← DC IP</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="dj-step" id="djs-1">
+          <div class="dj-content">
+            <div class="stitle" style="margin-bottom:.5rem;font-size:.9rem">Step 2 — Verify DNS Resolution</div>
+            <div class="sdesc" style="margin-bottom:.9rem">On client CMD, verify the DC can be located before attempting to join. These three commands together confirm DNS is working correctly.</div>
+            <div class="ip-box" style="font-size:.74rem">
+              <div class="ip-row"><span class="ip-k">ping 172.16.0.10</span><span class="ip-v">Reply received ✓</span></div>
+              <div class="ip-row"><span class="ip-k">nslookup hackverse.local</span><span class="ip-v">Returns 172.16.0.10 ✓</span></div>
+              <div class="ip-row"><span class="ip-k">If both pass</span><span class="ip-v warn">Domain join will succeed</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="dj-step" id="djs-2">
+          <div class="dj-content">
+            <div class="stitle" style="margin-bottom:.5rem;font-size:.9rem">Step 3 — Open System Properties</div>
+            <div class="sdesc" style="margin-bottom:.9rem">Settings → System → About → Advanced System Settings → Computer Name tab → Change button. Alternatively: Right-click This PC → Properties → Change Settings.</div>
+            <div class="fn c" style="max-width:100%;margin:0">Settings → System → About → Advanced System Settings</div>
+          </div>
+        </div>
+        <div class="dj-step" id="djs-3">
+          <div class="dj-content">
+            <div class="stitle" style="margin-bottom:.5rem;font-size:.9rem">Step 4 — Select Domain</div>
+            <div class="sdesc" style="margin-bottom:.9rem">In the Computer Name/Domain Changes dialog: select "Domain" radio button instead of "Workgroup". Enter the full domain name.</div>
+            <div class="ip-box" style="font-size:.74rem">
+              <div class="ip-row"><span class="ip-k">Member of</span><span class="ip-v">● Domain (selected)</span></div>
+              <div class="ip-row"><span class="ip-k">Domain Name</span><span class="ip-v warn">hackverse.local</span></div>
+              <div class="ip-row"><span class="ip-k">Click</span><span class="ip-v">OK</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="dj-step" id="djs-4">
+          <div class="dj-content">
+            <div class="stitle" style="margin-bottom:.5rem;font-size:.9rem">Step 5 — Authenticate as Domain Admin</div>
+            <div class="sdesc" style="margin-bottom:.9rem">Windows prompts for credentials with permission to join machines to the domain. Use the Domain Administrator account (or a delegated account with "Join computers" right).</div>
+            <div class="ip-box" style="font-size:.74rem">
+              <div class="ip-row"><span class="ip-k">Username</span><span class="ip-v">Administrator</span></div>
+              <div class="ip-row"><span class="ip-k">Password</span><span class="ip-v">••••••••••</span></div>
+              <div class="ip-row"><span class="ip-k">Domain</span><span class="ip-v">hackverse.local</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="dj-step" id="djs-5">
+          <div class="dj-content">
+            <div class="stitle" style="margin-bottom:.5rem;font-size:.9rem">Step 6 — Restart & Login as Domain User</div>
+            <div class="sdesc" style="margin-bottom:.9rem">Success message: "Welcome to the hackverse.local domain". Restart required. After reboot, login as domain user. Select "Other User" on login screen.</div>
+            <div class="ip-box" style="font-size:.74rem">
+              <div class="ip-row"><span class="ip-k">Login format</span><span class="ip-v warn">hackverse\student1</span></div>
+              <div class="ip-row"><span class="ip-k">Or UPN format</span><span class="ip-v">student1@hackverse.local</span></div>
+              <div class="ip-row"><span class="ip-k">Auth source</span><span class="ip-v green" style="color:var(--green)">Active Directory (Kerberos)</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="dj-nav">
+          <button class="dj-btn" onclick="djPrev()">← Previous</button>
+          <span id="dj-counter" style="font-family:var(--mono);font-size:.65rem;color:var(--text-lo);align-self:center">1 / 6</span>
+          <button class="dj-btn primary" onclick="djNext()">Next →</button>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="sh-tag" style="margin-bottom:1rem">DNS Dependency — Failure vs Success</div>
+      <div class="sc" style="margin-bottom:1rem">
+        <div class="sc-bar" style="background:var(--red)"></div>
+        <span class="sc-tag" style="background:rgba(224,48,80,.1);color:var(--red);border:1px solid rgba(224,48,80,.3)">Wrong DNS → Failure</span>
+        <div class="flow" style="margin:1rem 0;max-width:100%">
+          <div class="fn r" style="font-size:.72rem">Client DNS → Wrong IP (e.g. 8.8.8.8)</div>
+          <div class="fa">↓</div>
+          <div class="fn r" style="font-size:.72rem">nslookup hackverse.local → FAILS</div>
+          <div class="fa">↓</div>
+          <div class="fn r" style="font-size:.72rem">❌ "Domain not found" Error</div>
+        </div>
+      </div>
+      <div class="sc">
+        <div class="sc-bar" style="background:var(--green)"></div>
+        <span class="sc-tag" style="background:rgba(0,232,122,.1);color:var(--green);border:1px solid rgba(0,232,122,.3)">Correct DNS → Success</span>
+        <div class="flow" style="margin:1rem 0;max-width:100%">
+          <div class="fn g" style="font-size:.72rem">Client DNS → 172.16.0.10 (DC)</div>
+          <div class="fa">↓</div>
+          <div class="fn g" style="font-size:.72rem">nslookup hackverse.local → 172.16.0.10 ✓</div>
+          <div class="fa">↓</div>
+          <div class="fn g" style="font-size:.72rem">✓ Domain Join Successful</div>
+        </div>
+      </div>
+
+      <!-- Error Reference -->
+      <div style="margin-top:1.4rem">
+        <div style="font-family:var(--mono);font-size:.62rem;color:var(--text-lo);letter-spacing:2px;text-transform:uppercase;margin-bottom:1rem">COMMON ERRORS & FIXES</div>
+        <div class="err-grid" style="grid-template-columns:1fr">
+          <div class="err-card">
+            <div class="err-title">Error: Domain Not Found</div>
+            <div class="err-reason">DNS not pointing to Domain Controller</div>
+            <div class="err-fix">Fix: Set DNS to 172.16.0.10 → retry nslookup</div>
+          </div>
+          <div class="err-card">
+            <div class="err-title">Error: Cannot Contact DC</div>
+            <div class="err-reason">Network connectivity / firewall issue</div>
+            <div class="err-fix">Fix: ping 172.16.0.10 → check VM network mode</div>
+          </div>
+          <div class="err-card">
+            <div class="err-title">Error: Access Denied</div>
+            <div class="err-reason">Wrong domain administrator credentials</div>
+            <div class="err-fix">Fix: Use Administrator@hackverse.local format</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<hr class="divider">
+
+<!-- ═══ SECTION 17 – MACHINE TRUST ═══ -->
+<div class="alt-bg">
+<div class="wrap reveal">
+  <div class="sh">
+    <div class="sh-tag">Security Internals</div>
+    <h2 class="sh-title">Machine Trust Relationship</h2>
+    <p class="sh-desc">When a computer joins the domain, it is not just a configuration change — a cryptographic trust relationship is established between the machine and the Domain Controller.</p>
+  </div>
+
+  <div class="flow">
+    <div class="fn">Windows 10 Client Requests Domain Join</div><div class="fa">↓</div>
+    <div class="fn c">Computer Object Created in AD (Computers OU)</div><div class="fa">↓</div>
+    <div class="fn">Machine Account Password Auto-Generated (120 chars, rotates every 30 days)</div><div class="fa">↓</div>
+    <div class="fn p">Trust Relationship Established: Client ↔ DC</div><div class="fa">↓</div>
+    <div class="fn g">Authentication Switches: Local SAM → Kerberos ✓</div>
+  </div>
+
+  <div class="obj-grid" style="margin-top:2rem">
+    <div class="obj-card" style="--c:var(--purple)">
+      <div class="obj-icon" style="background:rgba(112,96,240,.1);color:var(--purple)">🖥</div>
+      <div class="obj-name">Computer Object Created</div>
+      <div class="obj-desc">CN=WIN10-PC01 created in Computers container. Object stores: machine name, OS version, last logon, and group memberships. Visible in ADUC → Computers.</div>
+    </div>
+    <div class="obj-card" style="--c:var(--cyan)">
+      <div class="obj-icon" style="background:rgba(0,200,255,.1);color:var(--cyan)">🔑</div>
+      <div class="obj-name">Machine Account Password</div>
+      <div class="obj-desc">A 120-character machine account password (WIN10-PC01$) is automatically generated and stored in AD. It rotates every 30 days — managed automatically without admin intervention.</div>
+    </div>
+    <div class="obj-card" style="--c:var(--teal)">
+      <div class="obj-icon" style="background:rgba(0,229,200,.1);color:var(--teal)">🤝</div>
+      <div class="obj-name">Trust Established</div>
+      <div class="obj-desc">The machine can now authenticate to the domain using its machine account. This trust is required before any user can log in with domain credentials on this machine.</div>
+    </div>
+    <div class="obj-card" style="--c:var(--amber)">
+      <div class="obj-icon" style="background:rgba(240,165,0,.1);color:var(--amber)">🔐</div>
+      <div class="obj-name">Kerberos Replaces Local Auth</div>
+      <div class="obj-desc">After joining, domain logins use Kerberos protocol instead of the local SAM database. The DC becomes the authentication arbiter for this machine permanently.</div>
+    </div>
+  </div>
+
+  <div class="ab" style="margin-top:1.5rem">
+    <div class="ab-label">Pentesting Relevance</div>
+    <div class="ab-text">The machine trust relationship is critical in attacks like <strong style="color:var(--red)">Pass-the-Ticket</strong>, <strong style="color:var(--red)">Silver Ticket</strong>, and <strong style="color:var(--red)">Machine-in-the-Middle</strong> attacks. If the machine account password is extracted, an attacker can forge service tickets for that specific machine — bypassing normal user authentication entirely.</div>
+  </div>
+</div>
+</div>
+
+<hr class="divider">
+
+<!-- ═══ SECTION 18 – KERBEROS ═══ -->
+<section id="s-kerb">
+<div class="wrap reveal">
+  <div class="sh">
+    <div class="sh-tag">Authentication Protocol</div>
+    <h2 class="sh-title">Introduction to Kerberos Authentication</h2>
+    <p class="sh-desc">After a machine joins the domain, all authentication switches from local (NTLM/SAM) to Kerberos — the enterprise-grade ticket-based authentication protocol used by Active Directory.</p>
+  </div>
+
+  <div class="ab">
+    <div class="ab-label">Why Kerberos?</div>
+    <div class="ab-text">Kerberos never sends passwords over the network. Instead, it uses encrypted tickets as proof of identity. Think of it like an airport boarding pass — you show the ticket (not your passport) to board each flight (access each resource). The ticket proves who you are without revealing your secret.</div>
+  </div>
+
+  <div class="kerb-wrap" style="margin-top:2rem">
+    <div class="kerb-box">
+      <div class="kerb-title" style="color:var(--cyan)">Client Machine</div>
+      <div class="kerb-item">1. User enters hackverse\student1</div>
+      <div class="kerb-item">2. Sends AS-REQ to KDC</div>
+      <div class="kerb-item">3. Receives TGT (Ticket Granting Ticket)</div>
+      <div class="kerb-item">4. Uses TGT to request service tickets</div>
+      <div class="kerb-item">5. Presents service ticket to resource</div>
+      <div class="kerb-item">6. Access granted without password</div>
+    </div>
+    <div class="kerb-center">
+      <div class="kerb-label">AS-REQ →</div>
+      <div class="kerb-label">← TGT</div>
+      <div style="width:1px;height:40px;background:linear-gradient(var(--border-hi),transparent);margin:.5rem 0"></div>
+      <div class="kerb-label">TGS-REQ →</div>
+      <div class="kerb-label">← Ticket</div>
+    </div>
+    <div class="kerb-box">
+      <div class="kerb-title" style="color:var(--purple)">KDC on Domain Controller</div>
+      <div class="kerb-item">Authentication Service (AS)</div>
+      <div class="kerb-item">Receives AS-REQ from client</div>
+      <div class="kerb-item">Validates against NTDS.dit</div>
+      <div class="kerb-item">Issues TGT (valid 10 hours by default)</div>
+      <div class="kerb-item">Ticket Granting Service (TGS)</div>
+      <div class="kerb-item">Issues service-specific tickets on request</div>
+    </div>
+  </div>
+
+  <div class="auth-wrap" id="kerb-flow" style="margin-top:2.5rem">
+    <div class="an" id="kf1"><div class="albl">Phase 1 — Pre-Authentication</div><div class="atitle">User password hashed → Sent as authenticator</div></div>
+    <div class="ac"><div class="ac-line"></div><span>AS-REQ</span></div>
+    <div class="an" id="kf2"><div class="albl">Phase 2 — Ticket Granting Ticket</div><div class="atitle">KDC issues TGT encrypted with krbtgt hash</div></div>
+    <div class="ac"><div class="ac-line"></div><span>TGS-REQ (use TGT)</span></div>
+    <div class="an" id="kf3"><div class="albl">Phase 3 — Service Ticket</div><div class="atitle">KDC issues Service Ticket for target resource</div></div>
+    <div class="ac"><div class="ac-line"></div><span>Present Ticket</span></div>
+    <div class="an" id="kf4"><div class="albl">Phase 4 — Resource Access</div><div class="atitle">Resource validates ticket → Access granted</div></div>
+    <div class="an hg" id="kf5" style="margin-top:.5rem"><div class="albl">Result</div><div class="atitle">✅ No password ever sent over network</div></div>
+    <button class="play-btn" onclick="playKerb()">▶ Animate Kerberos Flow</button>
+  </div>
+
+  <div class="split" style="margin-top:2rem">
+    <div class="sc">
+      <div class="sc-bar" style="background:rgba(26,108,240,.5)"></div>
+      <span class="sc-tag" style="background:rgba(26,108,240,.1);color:#7ab8f5;border:1px solid rgba(26,108,240,.3)">Before Domain Join</span>
+      <div class="sc-title">Local Authentication (NTLM/SAM)</div>
+      <div class="si">Credentials checked against local SAM database</div>
+      <div class="si">Only works on this specific machine</div>
+      <div class="si">No SSO — must re-enter credentials per resource</div>
+      <div class="si">No central audit or policy enforcement</div>
+    </div>
+    <div class="sc">
+      <div class="sc-bar" style="background:var(--cyan)"></div>
+      <span class="sc-tag" style="background:rgba(0,200,255,.1);color:var(--cyan);border:1px solid rgba(0,200,255,.3)">After Domain Join</span>
+      <div class="sc-title">Kerberos Authentication</div>
+      <div class="si">Credentials validated by Domain Controller (KDC)</div>
+      <div class="si">Works on any domain-joined machine in the forest</div>
+      <div class="si">SSO — TGT used for all resources without re-login</div>
+      <div class="si">Full central audit, policy enforcement, and access logging</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<hr class="divider">
+
+<!-- ═══ SECTION 19 – AD HIERARCHY ═══ -->
+<div class="alt-bg">
+<div class="wrap reveal">
+  <div class="sh">
+    <div class="sh-tag">Visualization</div>
+    <h2 class="sh-title">Active Directory Object Hierarchy</h2>
+    <p class="sh-desc">The complete AD structure from Forest down to individual objects — click any level to see what it contains.</p>
+  </div>
+
+  <div style="display:flex;gap:2rem;flex-wrap:wrap;align-items:flex-start;margin-top:1rem">
+    <div style="flex:1;min-width:280px">
+      <div class="ou-tree" style="max-width:100%;margin:0">
+        <div class="ou-root">🌲 Forest: hackverse.local</div>
+        <div class="ou-connector"></div>
+        <div style="display:flex;justify-content:center">
+          <div>
+            <div class="ou-node active" onclick="showLevel('domain')" style="min-width:180px;border-color:var(--cyan)">🏛 Domain: hackverse.local</div>
+          </div>
+        </div>
+        <div class="ou-connector"></div>
+        <div class="ou-branches">
+          <div>
+            <div class="ou-node" onclick="showLevel('hr-ou')">📁 HR OU</div>
+          </div>
+          <div>
+            <div class="ou-node" onclick="showLevel('it-ou')">📁 IT OU</div>
+          </div>
+          <div>
+            <div class="ou-node" onclick="showLevel('computers')">🖥 Computers</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="flex:1;min-width:240px">
+      <div class="gc" id="level-detail">
+        <div style="font-family:var(--mono);font-size:.62rem;color:var(--text-lo);letter-spacing:1px;margin-bottom:.8rem">// SELECTED OBJECT DETAILS</div>
+        <div id="level-content">
+          <div class="stitle" style="margin-bottom:.5rem;color:var(--cyan)">Domain: hackverse.local</div>
+          <div class="sdesc">The top-level administrative boundary. Contains all users, computers, groups, and OUs. The Domain Controller manages authentication and policy for all objects within.</div>
+          <div style="margin-top:1rem">
+            <div class="kerb-item" style="font-size:.72rem;color:var(--text-md)">🏛 Parent Forest: hackverse.local</div>
+            <div class="kerb-item" style="font-size:.72rem;color:var(--text-md)">🧠 DC: 172.16.0.10</div>
+            <div class="kerb-item" style="font-size:.72rem;color:var(--text-md)">🔐 Auth Protocol: Kerberos</div>
+            <div class="kerb-item" style="font-size:.72rem;color:var(--text-md)">📁 Default OUs: Users, Computers, Domain Controllers</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<hr class="divider">
+
+<!-- ═══ SECTION 20-21 – LOGIN COMPARE + VERIFY ═══ -->
+<div class="wrap reveal">
+  <div class="sh">
+    <div class="sh-tag">Before vs After</div>
+    <h2 class="sh-title">Domain Login vs Local Login & Verification</h2>
+    <p class="sh-desc">The login format and authentication source change completely after joining the domain. Verification commands confirm domain membership and identity context.</p>
+  </div>
+
+  <div class="lc">
+    <div class="lb">
+      <div class="lb-hd"><span style="width:7px;height:7px;border-radius:50%;background:var(--red);display:inline-block"></span>Before Domain Join — Local Auth</div>
+      <div class="lb-body">
+        <div class="lb-prompt">Username:</div>
+        <div class="lb-val" style="color:#7ab8f5">.\Administrator</div>
+        <div class="lb-meta">Verified: Local SAM database<br>Scope: This machine only<br>KDC: ✗ None</div>
+      </div>
+    </div>
+    <div class="lb">
+      <div class="lb-hd"><span style="width:7px;height:7px;border-radius:50%;background:var(--green);display:inline-block"></span>After Domain Join — Kerberos Auth</div>
+      <div class="lb-body">
+        <div class="lb-prompt">Username:</div>
+        <div class="lb-val" style="color:var(--green)">hackverse\student1</div>
+        <div class="lb-meta" style="color:var(--text-md)">Or: student1@hackverse.local<br>Verified: Active Directory (NTDS.dit)<br>KDC: ✓ 172.16.0.10</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:2rem">
+    <div class="sh-tag" style="margin-bottom:1rem">Verification Commands</div>
+    <div class="ip-box" style="font-size:.78rem">
+      <div class="ip-row"><span class="ip-k" style="font-family:var(--mono)">whoami</span><span class="ip-v">hackverse\student1</span></div>
+      <div class="ip-row"><span class="ip-k" style="font-family:var(--mono)">systeminfo | findstr Domain</span><span class="ip-v">Domain: hackverse.local</span></div>
+      <div class="ip-row"><span class="ip-k" style="font-family:var(--mono)">net user student1 /domain</span><span class="ip-v">Returns AD profile details</span></div>
+      <div class="ip-row"><span class="ip-k" style="font-family:var(--mono)">klist</span><span class="ip-v">Shows active Kerberos tickets (TGT)</span></div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ═══ SECTION 22-23 – SECURITY + PENTEST ═══ -->
+<div class="alt-bg">
+<div class="wrap reveal">
+  <div class="sh">
+    <div class="sh-tag">Cybersecurity Context</div>
+    <h2 class="sh-title">AD Security Relevance & Pentesting Bridge</h2>
+    <p class="sh-desc">Active Directory is the #1 target in enterprise penetration tests. Understanding why requires knowing exactly what compromising AD gives an attacker.</p>
+  </div>
+
+  <div class="flow" style="margin-bottom:2rem">
+    <div class="fn r">Attacker Compromises Single Domain User</div><div class="fa">↓ Kerberoasting / Credential Dump</div>
+    <div class="fn r">Privilege Escalation → Domain Admin</div><div class="fa">↓</div>
+    <div class="fn r">Domain Controller Compromised</div><div class="fa">↓ DCSync / NTDS.dit Dump</div>
+    <div class="fn r">All 500 User Password Hashes Extracted</div><div class="fa">↓</div>
+    <div class="fn r">Complete Enterprise Compromise 💀</div>
+  </div>
+
+  <div class="sec-grid">
+    <div class="sec-card">
+      <div class="sec-title">AD Enumeration</div>
+      <div class="sec-desc">First step after gaining any domain foothold. Map users, groups, OUs, GPOs, and trust relationships using tools like BloodHound, ldapdomaindump, or PowerView.</div>
+    </div>
+    <div class="sec-card">
+      <div class="sec-title">Kerberoasting</div>
+      <div class="sec-desc">Request service tickets for SPNs, extract the encrypted ticket offline, crack the service account password without touching the DC or triggering traditional alerts.</div>
+    </div>
+    <div class="sec-card">
+      <div class="sec-title">Pass-the-Hash / Ticket</div>
+      <div class="sec-desc">Use extracted NTLM hashes or Kerberos tickets to authenticate as another user without knowing their plaintext password. Bypasses standard authentication completely.</div>
+    </div>
+    <div class="sec-card">
+      <div class="sec-title">DCSync Attack</div>
+      <div class="sec-desc">If Domain Admin access is obtained, simulate a DC replication request to extract all password hashes from NTDS.dit — effectively dumping the entire identity database.</div>
+    </div>
+    <div class="sec-card">
+      <div class="sec-title">Golden Ticket</div>
+      <div class="sec-desc">With the krbtgt hash, forge a Kerberos TGT for any user in the domain — including Domain Admins — giving perpetual, unrevokable access even if passwords change.</div>
+    </div>
+    <div class="sec-card">
+      <div class="sec-title">GPO Abuse</div>
+      <div class="sec-desc">Modify Group Policy to deploy malware, create local admin accounts, or disable Defender across all domain machines simultaneously — affecting the entire organization at once.</div>
+    </div>
+  </div>
+
+  <div class="ab" style="margin-top:2rem">
+    <div class="ab-label">Pentesting Prerequisites</div>
+    <div class="ab-text">Everything covered today — OUs, users, groups, machine trust, Kerberos — becomes attack surface once a machine joins the domain. AD Pentesting starts from domain membership. With the lab built (DC + joined client + Kali), you are now ready to begin enumeration in the next session.</div>
+  </div>
+</div>
+</div>
+
+<hr class="divider">
+
+<!-- ═══ SECTION 24 – TOPOLOGY ═══ -->
+<div class="wrap reveal">
+  <div class="sh">
+    <div class="sh-tag">Lab Architecture</div>
+    <h2 class="sh-title">Enterprise Lab Topology</h2>
+    <p class="sh-desc">The complete isolated lab environment simulating a real enterprise domain for learning and pentesting.</p>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:center">
+    <div>
+      <div class="topo">
+        <div class="tn kali">🐉 Kali Linux (Attacker)<br><span style="font-size:.65rem;opacity:.7">Enumeration · Exploitation</span></div>
+        <div class="ta">↕</div>
+        <div class="tn dc">🧠 Windows Server 2016/2022<br><span style="font-size:.65rem">DC-01 · hackverse.local</span></div>
+        <div class="ta">↕</div>
+        <div class="tn win">🖥 Windows 10 Pro (Client)<br><span style="font-size:.65rem;opacity:.7">WIN10-PC01 · Domain Joined</span></div>
+        <div class="ta">↓</div>
+        <div class="tn dom">🌐 Isolated Network<br><span style="font-size:.65rem">172.16.0.0/16 · Internal</span></div>
+      </div>
+    </div>
+    <div>
+      <div class="ip-box">
+        <div class="ip-row"><span class="ip-k">Domain</span><span class="ip-v">hackverse.local</span></div>
+        <div class="ip-row"><span class="ip-k">DC IP (Static)</span><span class="ip-v">172.16.0.10</span></div>
+        <div class="ip-row"><span class="ip-k">Client IP</span><span class="ip-v">172.16.0.20</span></div>
+        <div class="ip-row"><span class="ip-k">Kali IP</span><span class="ip-v">172.16.0.30</span></div>
+        <div class="ip-row"><span class="ip-k">Subnet</span><span class="ip-v">255.255.0.0</span></div>
+        <div class="ip-row"><span class="ip-k">Gateway</span><span class="ip-v">172.16.0.1</span></div>
+        <div class="ip-row"><span class="ip-k">DNS Server</span><span class="ip-v warn">172.16.0.10 (DC itself)</span></div>
+        <div class="ip-row"><span class="ip-k">Network Type</span><span class="ip-v">Host-Only / Internal</span></div>
+      </div>
+      <div class="ab" style="margin-top:1rem">
+        <div class="ab-label">Pre-Join Verification Checklist</div>
+        <div class="ab-text" style="font-family:var(--mono);font-size:.73rem">
+          ☐ ping 172.16.0.10 → Reply received<br>
+          ☐ nslookup hackverse.local → Returns DC IP<br>
+          ☐ DC static IP confirmed: ipconfig on server<br>
+          ☐ Both VMs on same virtual network<br>
+          ✓ All pass → Domain join will succeed
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ═══ SECTION 25 – TERMINAL ═══ -->
+<div class="alt-bg">
+<div class="wrap reveal">
+  <div class="sh">
+    <div class="sh-tag">Hands-On Lab</div>
+    <h2 class="sh-title">Interactive Command Lab Simulator</h2>
+    <p class="sh-desc">Practice essential Windows domain verification commands. Click a command or type below.</p>
+  </div>
+
+  <div class="term">
+    <div class="term-hd">
+      <span class="td r"></span><span class="td y"></span><span class="td g"></span>
+      <span style="font-family:var(--mono);font-size:.62rem;color:var(--text-lo);margin-left:.4rem">Windows Command Prompt</span>
+      <span class="term-info">hackverse\student1 — WIN10-PC01</span>
+    </div>
+    <div class="term-body" id="term-out">
+      <div class="tol info"># AD Object Management Command Lab — hackverse.local</div>
+      <div class="tol info"># Click a command hint below or type in the input field</div>
+      <div class="tol">&nbsp;</div>
+    </div>
+    <div class="term-in-wrap">
+      <div class="cmd-btns">
+        <span class="cb" onclick="runCmd('ipconfig')">ipconfig</span>
+        <span class="cb" onclick="runCmd('hostname')">hostname</span>
+        <span class="cb" onclick="runCmd('whoami')">whoami</span>
+        <span class="cb" onclick="runCmd('systeminfo | findstr Domain')">findstr Domain</span>
+        <span class="cb" onclick="runCmd('nslookup hackverse.local')">nslookup</span>
+        <span class="cb" onclick="runCmd('net user student1 /domain')">net user /domain</span>
+        <span class="cb" onclick="runCmd('net group "Domain Admins" /domain')">Domain Admins</span>
+        <span class="cb" onclick="runCmd('klist')">klist</span>
+        <span class="cb" onclick="runCmd('ping 172.16.0.10')">ping DC</span>
+        <span class="cb" onclick="runCmd('net localgroup administrators')">local admins</span>
+        <span class="cb" onclick="clearTerminal()">clear</span>
+      </div>
+      <div class="term-in-row">
+        <span class="term-prompt">C:\Users\student1&gt;</span>
+        <input class="term-input" id="t-input" placeholder="Type a command..." onkeydown="handleKey(event)">
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<hr class="divider">
+
+<!-- ═══ SECTION 26 – QUIZ ═══ -->
+<section id="s-quiz">
+<div class="wrap reveal">
+  <div class="sh">
+    <div class="sh-tag">Knowledge Assessment</div>
+    <h2 class="sh-title">AD Object Management Assessment</h2>
+    <p class="sh-desc">Test your understanding of OUs, users, groups, domain joining, and Kerberos fundamentals.</p>
+  </div>
+
+  <div class="score-hd">
+    <div>
+      <div class="sc-lbl">Score</div>
+      <div class="sc-val" id="sc-disp">0 / 7</div>
+    </div>
+    <div style="flex:1">
+      <div class="sc-lbl" style="margin-bottom:.4rem">Progress</div>
+      <div class="pb-wrap"><div class="pb" id="sc-bar" style="width:0%"></div></div>
+    </div>
+    <button class="btn-s" style="font-size:.68rem;padding:7px 14px" onclick="resetQuiz()">Reset</button>
+  </div>
+
+  <div class="qcard">
+    <div class="qq">1. Why must the client's DNS point to the Domain Controller before joining the domain?</div>
+    <div class="qopts">
+      <button class="qo" onclick="qa(this,'w',1)">To speed up internet browsing on the client machine</button>
+      <button class="qo" onclick="qa(this,'c',1)">DNS resolves the domain name (hackverse.local) to the DC's IP — without it, the client cannot locate the DC and domain join fails</button>
+      <button class="qo" onclick="qa(this,'w',1)">DNS is only required after joining — it is not needed for the join process itself</button>
+      <button class="qo" onclick="qa(this,'w',1)">The client needs DNS only for internet access, not for Active Directory</button>
+    </div>
+    <div class="qfb" id="qf1"></div>
+  </div>
+
+  <div class="qcard">
+    <div class="qq">2. What is the purpose of an Organizational Unit (OU) in Active Directory?</div>
+    <div class="qopts">
+      <button class="qo" onclick="qa(this,'w',2)">OUs are used to store user passwords securely in AD</button>
+      <button class="qo" onclick="qa(this,'w',2)">OUs function like domain controllers — they handle authentication requests</button>
+      <button class="qo" onclick="qa(this,'c',2)">OUs are logical containers that organize AD objects into departments, enabling targeted policy application and delegation of control</button>
+      <button class="qo" onclick="qa(this,'w',2)">OUs are only used for computer objects — not for users or groups</button>
+    </div>
+    <div class="qfb" id="qf2"></div>
+  </div>
+
+  <div class="qcard">
+    <div class="qq">3. What happens internally when a Windows 10 machine joins the domain?</div>
+    <div class="qopts">
+      <button class="qo" onclick="qa(this,'w',3)">Only the user's account is moved from the local SAM to Active Directory</button>
+      <button class="qo" onclick="qa(this,'c',3)">A computer object is created in AD, a machine account password is generated, a trust relationship is established, and authentication switches to Kerberos</button>
+      <button class="qo" onclick="qa(this,'w',3)">The machine is wiped and reinstalled with domain-specific configuration</button>
+      <button class="qo" onclick="qa(this,'w',3)">Only DNS settings change — nothing else is modified internally</button>
+    </div>
+    <div class="qfb" id="qf3"></div>
+  </div>
+
+  <div class="qcard">
+    <div class="qq">4. Why do enterprises use Security Groups instead of assigning permissions to individual users?</div>
+    <div class="qopts">
+      <button class="qo" onclick="qa(this,'w',4)">Groups are required by Windows — individual user permissions are not supported</button>
+      <button class="qo" onclick="qa(this,'c',4)">Groups provide scalable permission management — assign permissions once to a group, then add users to the group so they inherit all permissions instantly</button>
+      <button class="qo" onclick="qa(this,'w',4)">Groups encrypt permissions so they cannot be audited or reviewed</button>
+      <button class="qo" onclick="qa(this,'w',4)">Individual user permissions work fine — groups are only needed for email distribution</button>
+    </div>
+    <div class="qfb" id="qf4"></div>
+  </div>
+
+  <div class="qcard">
+    <div class="qq">5. What is the key security advantage of Kerberos over local NTLM authentication?</div>
+    <div class="qopts">
+      <button class="qo" onclick="qa(this,'w',5)">Kerberos is faster because it skips password verification entirely</button>
+      <button class="qo" onclick="qa(this,'w',5)">Kerberos stores passwords in plaintext for fast comparison</button>
+      <button class="qo" onclick="qa(this,'c',5)">Kerberos never sends passwords over the network — it uses encrypted tickets as proof of identity, enabling SSO without exposing credentials</button>
+      <button class="qo" onclick="qa(this,'w',5)">Kerberos only works on Windows machines — it does not support cross-platform auth</button>
+    </div>
+    <div class="qfb" id="qf5"></div>
+  </div>
+
+  <div class="qcard">
+    <div class="qq">6. Which command verifies that a client machine has successfully joined the domain?</div>
+    <div class="qopts">
+      <button class="qo" onclick="qa(this,'w',6)">ipconfig /all — shows domain in IP configuration output</button>
+      <button class="qo" onclick="qa(this,'c',6)">whoami → shows hackverse\student1, and systeminfo | findstr Domain → shows hackverse.local</button>
+      <button class="qo" onclick="qa(this,'w',6)">ping hackverse.local — successful ping confirms domain membership</button>
+      <button class="qo" onclick="qa(this,'w',6)">nslookup 172.16.0.10 — reverse DNS lookup confirms domain join</button>
+    </div>
+    <div class="qfb" id="qf6"></div>
+  </div>
+
+  <div class="qcard">
+    <div class="qq">7. What does "Error: Domain not found" during domain join indicate?</div>
+    <div class="qopts">
+      <button class="qo" onclick="qa(this,'w',7)">The domain name was typed incorrectly — it must be in UPPERCASE</button>
+      <button class="qo" onclick="qa(this,'w',7)">The Domain Controller's Windows firewall must be completely disabled first</button>
+      <button class="qo" onclick="qa(this,'c',7)">The client's DNS is not pointing to the Domain Controller — nslookup hackverse.local fails, so the DC cannot be located</button>
+      <button class="qo" onclick="qa(this,'w',7)">The client machine must have a static IP to join the domain — DHCP is not supported</button>
+    </div>
+    <div class="qfb" id="qf7"></div>
+  </div>
+</div>
+</section>
+
+<hr class="divider">
+
+<!-- ═══ SECTION 27 – CONCLUSION ═══ -->
+<div class="alt-bg">
+<div class="wrap reveal">
+  <div class="sh">
+    <div class="sh-tag">Session Complete</div>
+    <h2 class="sh-title">The Complete Enterprise Identity Infrastructure</h2>
+    <p class="sh-desc" style="font-style:italic;max-width:700px">"Active Directory transforms isolated systems into centrally managed enterprise infrastructure — where every user, machine, and policy is governed by a single authoritative identity system."</p>
+  </div>
+
+  <div class="conc-flow">
+    <div class="cf"><span style="font-family:var(--mono);font-size:.6rem;color:var(--text-lo);display:block;margin-bottom:.2rem">Foundation</span>Domain Controller — hackverse.local</div>
+    <div class="ca">↓</div>
+    <div class="cf"><span style="font-family:var(--mono);font-size:.6rem;color:var(--text-lo);display:block;margin-bottom:.2rem">Organization</span>Organizational Units — HR | IT | Finance | Security</div>
+    <div class="ca">↓</div>
+    <div class="cf"><span style="font-family:var(--mono);font-size:.6rem;color:var(--text-lo);display:block;margin-bottom:.2rem">Identities</span>Domain Users — student1@hackverse.local</div>
+    <div class="ca">↓</div>
+    <div class="cf"><span style="font-family:var(--mono);font-size:.6rem;color:var(--text-lo);display:block;margin-bottom:.2rem">Permissions</span>Security Groups — IT-Admins | Finance-ReadOnly</div>
+    <div class="ca">↓</div>
+    <div class="cf"><span style="font-family:var(--mono);font-size:.6rem;color:var(--text-lo);display:block;margin-bottom:.2rem">Integration</span>Domain-Joined Clients — WIN10-PC01 ↔ DC Trust</div>
+    <div class="ca">↓</div>
+    <div class="cf"><span style="font-family:var(--mono);font-size:.6rem;color:var(--text-lo);display:block;margin-bottom:.2rem">Authentication</span>Kerberos — TGT Issued, SSO Enabled</div>
+    <div class="ca">↓</div>
+    <div class="cf">✅ Enterprise Identity Infrastructure Complete</div>
+  </div>
+
+  <div class="ig" style="margin-top:2.5rem">
+    <div class="ii"><div class="iv">OU</div><div class="il">Departments organized</div></div>
+    <div class="ii"><div class="iv">Users</div><div class="il">Centralized identities created</div></div>
+    <div class="ii"><div class="iv">Groups</div><div class="il">Scalable permissions assigned</div></div>
+    <div class="ii"><div class="iv">Kerberos</div><div class="il">Ticket-based SSO active</div></div>
+  </div>
+
+  <div style="text-align:center;margin-top:4rem;padding:2rem;background:var(--bg-glass);border:1px solid var(--border-hi);border-radius:12px">
+    <div style="font-family:var(--head);font-size:.68rem;letter-spacing:3px;color:var(--cyan);margin-bottom:.9rem;text-transform:uppercase">Next Session</div>
+    <div style="font-size:1.05rem;font-weight:600;margin-bottom:.65rem">Active Directory Pentesting — Enumeration & Attack Surface</div>
+    <div style="color:var(--text-md);font-size:.86rem;max-width:520px;margin:0 auto">With the complete lab in place — DC, joined clients, and Kali — you are ready to begin Active Directory enumeration, credential harvesting, Kerberoasting, and privilege escalation techniques.</div>
+    <div style="display:flex;gap:.8rem;justify-content:center;margin-top:1.4rem;flex-wrap:wrap">
+      <span style="font-family:var(--mono);font-size:.67rem;padding:4px 12px;border:1px solid var(--border);border-radius:2px;color:var(--text-lo)">BloodHound</span>
+      <span style="font-family:var(--mono);font-size:.67rem;padding:4px 12px;border:1px solid var(--border);border-radius:2px;color:var(--text-lo)">Kerberoasting</span>
+      <span style="font-family:var(--mono);font-size:.67rem;padding:4px 12px;border:1px solid var(--border);border-radius:2px;color:var(--text-lo)">Pass-the-Hash</span>
+      <span style="font-family:var(--mono);font-size:.67rem;padding:4px 12px;border:1px solid var(--border);border-radius:2px;color:var(--text-lo)">DCSync</span>
+      <span style="font-family:var(--mono);font-size:.67rem;padding:4px 12px;border:1px solid var(--border);border-radius:2px;color:var(--text-lo)">Golden Ticket</span>
+    </div>
+  </div>
+</div>
+</div>
+
+<footer style="text-align:center;padding:1.75rem;border-top:1px solid var(--border);font-family:var(--mono);font-size:.62rem;color:var(--text-lo)">
+  AD Object Management Academy · hackverse.local · Session 2 of AD Fundamentals
+</footer>
+
+<script>
+// ── SCROLL REVEAL ──
+const revealObs = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('in'); });
+},{threshold:.08});
+document.querySelectorAll('.reveal').forEach(el=>revealObs.observe(el));
+
+function go(id){ document.getElementById(id)?.scrollIntoView({behavior:'smooth'}); }
+
+// ── OU TOGGLE ──
+function toggleOU(el){
+  el.classList.toggle('active');
+  const ch = el.nextElementSibling;
+  if(ch && ch.classList.contains('ou-children')){
+    ch.style.display = el.classList.contains('active') ? 'flex' : 'none';
+  }
+}
+document.querySelectorAll('.ou-children').forEach(c=>c.style.display='none');
+
+// ── LEVEL DETAIL ──
+const levelData = {
+  'domain': {title:'Domain: hackverse.local',desc:'The primary AD administrative boundary. All objects live here. DC authenticates every login and enforces all policies.',items:['🧠 DC: 172.16.0.10','🔐 Protocol: Kerberos','📁 Default: Users, Computers, DCs','🔑 Auth: NTDS.dit database']},
+  'hr-ou': {title:'HR Organizational Unit',desc:'Container for all HR department objects. Separate GPOs restrict HR machines from installing software. HR Manager has delegated control over only this OU.',items:['👤 hr.manager','👤 hr.analyst','🖥 HR-PC01','📜 HR-Restrictions GPO']},
+  'it-ou': {title:'IT Organizational Unit',desc:'Container for IT staff. Has elevated permissions. IT GPO grants Remote Desktop access and software installation rights not given to other departments.',items:['👤 sysadmin','👤 student1','🖥 WIN10-PC01','📜 IT-AdminRights GPO']},
+  'computers': {title:'Computers Container',desc:'Default container where domain-joined machines appear. Best practice is to move computers to appropriate department OUs for targeted policy application.',items:['🖥 WIN10-PC01$ (joined)','🖥 HR-PC01$ (joined)','📋 Machine trust objects','🔑 Auto-rotating passwords']},
+};
+function showLevel(key){
+  const d = levelData[key];
+  if(!d) return;
+  document.getElementById('level-content').innerHTML = `
+    <div class="stitle" style="margin-bottom:.5rem;color:var(--cyan)">${d.title}</div>
+    <div class="sdesc" style="margin-bottom:1rem">${d.desc}</div>
+    ${d.items.map(i=>`<div class="kerb-item" style="font-size:.72rem;color:var(--text-md)">${i}</div>`).join('')}
+  `;
+}
+
+// ── DOMAIN JOIN STEPS ──
+let djCurrent = 0; const djTotal = 6;
+function djNext(){
+  if(djCurrent >= djTotal-1) return;
+  document.getElementById(`djs-${djCurrent}`).classList.remove('active');
+  document.getElementById(`dps-${djCurrent}`).classList.remove('current');
+  document.getElementById(`dps-${djCurrent}`).classList.add('done');
+  djCurrent++;
+  document.getElementById(`djs-${djCurrent}`).classList.add('active');
+  document.getElementById(`dps-${djCurrent}`).classList.add('current');
+  document.getElementById('dj-counter').textContent = `${djCurrent+1} / ${djTotal}`;
+}
+function djPrev(){
+  if(djCurrent <= 0) return;
+  document.getElementById(`djs-${djCurrent}`).classList.remove('active');
+  document.getElementById(`dps-${djCurrent}`).classList.remove('current','done');
+  djCurrent--;
+  document.getElementById(`djs-${djCurrent}`).classList.add('active');
+  document.getElementById(`dps-${djCurrent}`).classList.remove('done');
+  document.getElementById(`dps-${djCurrent}`).classList.add('current');
+  document.getElementById('dj-counter').textContent = `${djCurrent+1} / ${djTotal}`;
+}
+
+// ── AUTH FLOW ANIM ──
+function playAuth(){
+  const nodes = ['af1','af2','af3','af4','af5','af6'];
+  nodes.forEach(n=>document.getElementById(n)?.classList.remove('hl','hg'));
+  nodes.forEach((n,i)=>{
+    setTimeout(()=>document.getElementById(n)?.classList.add(i===5?'hg':'hl'), i*650);
+    setTimeout(()=>{ if(i<5) document.getElementById(n)?.classList.remove('hl'); }, i*650+600);
+  });
+}
+function playKerb(){
+  const nodes = ['kf1','kf2','kf3','kf4','kf5'];
+  nodes.forEach(n=>document.getElementById(n)?.classList.remove('hl','hg'));
+  nodes.forEach((n,i)=>{
+    setTimeout(()=>document.getElementById(n)?.classList.add(i===4?'hg':'hl'), i*700);
+    setTimeout(()=>{ if(i<4) document.getElementById(n)?.classList.remove('hl'); }, i*700+650);
+  });
+}
+
+// ── USER CREATOR ──
+function createUser(){
+  const fn = document.getElementById('uf-fn').value.trim() || 'John';
+  const ln = document.getElementById('uf-ln').value.trim() || 'Doe';
+  const un = document.getElementById('uf-un').value.trim() || 'jdoe';
+  const ou = document.getElementById('uf-ou').value;
+  const pw = document.getElementById('uf-pw').value;
+  if(!pw){ alert('Please enter a password.'); return; }
+  const out = document.getElementById('uf-output');
+  out.className = 'uf-output show';
+  out.innerHTML = `✓ User Created Successfully\n\nDistinguishedName: CN=${fn} ${ln},OU=${ou},DC=hackverse,DC=local\nSamAccountName:     ${un}\nUserPrincipalName:  ${un}@hackverse.local\nEnabled:            True\nOU:                 ${ou}\nPasswordSet:        True\nLastModified:       ${new Date().toLocaleString()}`.replace(/\n/g,'<br>');
+}
+
+// ── TERMINAL ──
+const cmds = {
+  'ipconfig': `Windows IP Configuration\n\nEthernet adapter Ethernet:\n   Connection-specific DNS Suffix : hackverse.local\n   IPv4 Address. . . . . . . . . : 172.16.0.20\n   Subnet Mask . . . . . . . . . : 255.255.0.0\n   Default Gateway . . . . . . . : 172.16.0.1\n   DNS Servers . . . . . . . . . : 172.16.0.10`,
+  'hostname': `WIN10-PC01`,
+  'whoami': `hackverse\\student1`,
+  'systeminfo | findstr domain': `Domain:                    hackverse.local\nLogon Server:              \\\\DC-01`,
+  'nslookup hackverse.local': `Server:  DC-01.hackverse.local\nAddress:  172.16.0.10\n\nName:    hackverse.local\nAddress:  172.16.0.10`,
+  'net user student1 /domain': `User name                    student1\nFull Name                    Student One\nComment                      IT Department User\nUser's comment\nCountry/region code          000\nAccount active               Yes\nAccount expires              Never\nPassword last set            Today\nPassword expires             Never\nPassword changeable          Today\nPassword required            Yes\nUser may change password     Yes\nWorkstations allowed         All\nLogon script\nUser profile\nHome directory\nLast logon                   Today\n\nLogon hours allowed          All\n\nLocal Group Memberships\nGlobal Group memberships     *Domain Users  *IT-Staff\nThe command completed successfully.`,
+  'net group "domain admins" /domain': `Group name     Domain Admins\nComment        Designated administrators of the domain\n\nMembers\n-------------------------------------------------------------------------------\nAdministrator\nThe command completed successfully.`,
+  'klist': `Current LogonId is 0:0x3e7\n\nCached Tickets: (2)\n\n#0>     Client: student1 @ HACKVERSE.LOCAL\n        Server: krbtgt/HACKVERSE.LOCAL @ HACKVERSE.LOCAL\n        KerbTicket Encryption Type: AES-256-CTS-HMAC-SHA1-96\n        Ticket Flags 0x40e10000\n        Start Time: ${new Date().toLocaleString()}\n        End Time:   (10 hours)\n        Renew Time: (7 days)\n#1>     Client: student1 @ HACKVERSE.LOCAL\n        Server: cifs/DC-01.hackverse.local @ HACKVERSE.LOCAL\n        KerbTicket Encryption Type: AES-256-CTS-HMAC-SHA1-96`,
+  'ping 172.16.0.10': `Pinging 172.16.0.10 with 32 bytes of data:\nReply from 172.16.0.10: bytes=32 time<1ms TTL=128\nReply from 172.16.0.10: bytes=32 time<1ms TTL=128\nReply from 172.16.0.10: bytes=32 time<1ms TTL=128\nReply from 172.16.0.10: bytes=32 time<1ms TTL=128\n\nPing statistics for 172.16.0.10:\n    Packets: Sent = 4, Received = 4, Lost = 0 (0% loss)`,
+  'net localgroup administrators': `Alias name     administrators\nComment        Administrators have complete and unrestricted access\n\nMembers\n-------------------------------------------------------------------------------\nAdministrator\nDomain Admins\nThe command completed successfully.`,
+};
+function addLine(cls, txt){
+  const o = document.getElementById('term-out');
+  txt.split('\n').forEach(line=>{ const d=document.createElement('div'); d.className='tol'+(cls?' '+cls:''); d.textContent=line; o.appendChild(d); });
+  o.scrollTop=o.scrollHeight;
+}
+function runCmd(cmd){
+  addLine('cmd',`C:\\Users\\student1> ${cmd}`);
+  const key = cmd.trim().toLowerCase();
+  const res = cmds[key] || `'${cmd}' is not recognized as an internal or external command.\nTry: ipconfig | hostname | whoami | klist | nslookup | ping`;
+  addLine('',res); addLine('','');
+  document.getElementById('t-input').value='';
+}
+function clearTerminal(){ document.getElementById('term-out').innerHTML='<div class="tol info"># Terminal cleared — hackverse.local</div><div class="tol">&nbsp;</div>'; }
+function handleKey(e){ if(e.key==='Enter'){ const v=e.target.value.trim(); if(v){ runCmd(v); e.target.value=''; } } }
+
+// ── QUIZ ──
+let score=0, answered=new Set(), total=7;
+const fb = {
+  1:{ok:'Correct! DNS is the navigation layer. Without it resolving hackverse.local → 172.16.0.10, the client literally cannot find the DC.',bad:'Not quite. DNS resolution of the domain name to the DC\'s IP is the exact mechanism that enables domain join. No DNS = no DC found = join fails.'},
+  2:{ok:'Correct! OUs are containers for organizing AD objects by department, enabling per-OU GPO application and delegated administration.',bad:'Not quite. OUs are logical organizational containers — they hold users, computers, groups, and receive Group Policy Objects for that department.'},
+  3:{ok:'Correct! Domain joining is a multi-step process: computer object creation, machine account password, trust relationship, and Kerberos activation.',bad:'Not quite. The domain join process involves creating a computer object, generating a machine account password, establishing a trust relationship, and switching authentication to Kerberos.'},
+  4:{ok:'Correct! Groups provide the scalability layer — assign permissions once, add users to inherit. New employee = add to group. Leaving = remove from group.',bad:'Not quite. Groups enable assign-once, inherit-everywhere permission management at any scale. This is the foundation of enterprise access control.'},
+  5:{ok:'Correct! Kerberos uses encrypted tickets (TGT/service tickets) instead of passwords. This enables SSO and prevents credentials from traveling over the network.',bad:'Not quite. The key advantage is that passwords are never sent over the network. Kerberos uses encrypted time-stamped tickets as proof of identity.'},
+  6:{ok:'Correct! whoami shows domain\\username format, and systeminfo | findstr Domain confirms the domain name directly.',bad:'Not quite. The reliable commands are whoami (shows hackverse\\student1) and systeminfo | findstr Domain (shows hackverse.local).'},
+  7:{ok:'Correct! "Domain not found" = DNS failure. The client cannot resolve hackverse.local to the DC\'s IP. Check: nslookup hackverse.local first.',bad:'Not quite. "Domain not found" means DNS is not pointing to the DC. Fix: set Preferred DNS Server to 172.16.0.10 on the client, then retry nslookup.'},
+};
+function qa(btn, r, qn){
+  if(answered.has(qn)) return;
+  answered.add(qn);
+  btn.parentElement.querySelectorAll('.qo').forEach(o=>o.disabled=true);
+  const f = document.getElementById(`qf${qn}`);
+  if(r==='c'){ btn.classList.add('ok'); score++; f.className='qfb show ok'; f.textContent='✓ '+fb[qn].ok; }
+  else { btn.classList.add('bad'); f.className='qfb show bad'; f.textContent='✗ '+fb[qn].bad; }
+  document.getElementById('sc-disp').textContent=`${score} / ${total}`;
+  document.getElementById('sc-bar').style.width=`${(score/total)*100}%`;
+}
+function resetQuiz(){
+  score=0; answered.clear();
+  document.getElementById('sc-disp').textContent=`0 / ${total}`;
+  document.getElementById('sc-bar').style.width='0%';
+  document.querySelectorAll('.qo').forEach(o=>{ o.classList.remove('ok','bad'); o.disabled=false; });
+  document.querySelectorAll('.qfb').forEach(f=>{ f.className='qfb'; f.textContent=''; });
+}
+</script>
+</body>
+</html>
